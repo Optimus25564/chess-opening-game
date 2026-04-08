@@ -200,7 +200,11 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
             <div class="board" id="practice-board"></div>
           </div>
         </div>
-        <div class="progress-bar"><div class="progress-fill" id="practice-bar"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+          <button class="btn btn-secondary" id="nav-back" onclick="navigateBack()" style="padding:6px 14px;font-size:1.1em;" title="后退" disabled>&larr;</button>
+          <div class="progress-bar" style="flex:1;margin-top:0;"><div class="progress-fill" id="practice-bar"></div></div>
+          <button class="btn btn-secondary" id="nav-forward" onclick="navigateForward()" style="padding:6px 14px;font-size:1.1em;" title="前进" disabled>&rarr;</button>
+        </div>
       </div>
       <div class="side-panel">
         <div class="info-box">
@@ -296,7 +300,7 @@ const OPENINGS = [
   // === King's Pawn (1.e4) ===
   {
     name: "意大利开局", nameEn: "Italian Game", eco: "C50-C54",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "white",
     moves: ["e2e4","e7e5","g1f3","b8c6","f1c4","f8c5"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5",
     desc: "最古老的开局之一，白方将象指向f7弱点，争夺中心控制权。局面开放，双方快速出子。",
@@ -337,7 +341,7 @@ const OPENINGS = [
   },
   {
     name: "西班牙开局（卢佩兹）", nameEn: "Ruy Lopez", eco: "C60-C99",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "white",
     moves: ["e2e4","e7e5","g1f3","b8c6","f1b5"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.Bb5",
     desc: "以16世纪西班牙教士卢佩兹命名。Bb5对c6马施压，间接威胁e5兵。是最深奥的开局之一，变化极其丰富。",
@@ -370,7 +374,7 @@ const OPENINGS = [
   },
   {
     name: "苏格兰开局", nameEn: "Scotch Game", eco: "C44-C45",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "white",
     moves: ["e2e4","e7e5","g1f3","b8c6","d2d4"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.d4",
     desc: "白方直接用d4挑战中心，追求快速打开局面。卡斯帕罗夫曾在世界冠军赛中使用。",
@@ -409,7 +413,7 @@ const OPENINGS = [
   },
   {
     name: "法兰西防御", nameEn: "French Defense", eco: "C00-C19",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","e7e6","d2d4","d7d5"],
     pgn: "1.e4 e6 2.d4 d5",
     desc: "黑方用e6支撑d5，挑战白方中心。局面常形成封闭结构，黑方的坏象（c8象）是长期难题。",
@@ -441,7 +445,7 @@ const OPENINGS = [
   },
   {
     name: "卡罗-卡恩防御", nameEn: "Caro-Kann Defense", eco: "B10-B19",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","c7c6","d2d4","d7d5"],
     pgn: "1.e4 c6 2.d4 d5",
     desc: "黑方用c6支撑d5反击中心。比法兰西防御更稳固，c8象不会被封住。适合追求坚固局面的棋手。",
@@ -472,7 +476,7 @@ const OPENINGS = [
   },
   {
     name: "西西里防御", nameEn: "Sicilian Defense", eco: "B20-B99",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","c7c5"],
     pgn: "1.e4 c5",
     desc: "最流行的对1.e4的回应。c5破坏白方的理想中心（d4），产生不对称的战斗型局面。变化分支极多。",
@@ -502,7 +506,7 @@ const OPENINGS = [
   },
   {
     name: "西西里防御-龙式变化", nameEn: "Sicilian Dragon", eco: "B70-B79",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","c7c5","g1f3","d7d6","d2d4","c5d4","f3d4","g8f6","b1c3","g7g6"],
     pgn: "1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 g6",
     desc: "黑方将象发展到g7形成龙形（兵结构似龙）。黑方攻击后翼，白方常发动王翼猛攻，局面非常尖锐。",
@@ -539,7 +543,7 @@ const OPENINGS = [
   },
   {
     name: "西西里防御-纳伊道夫变化", nameEn: "Sicilian Najdorf", eco: "B90-B99",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","c7c5","g1f3","d7d6","d2d4","c5d4","f3d4","g8f6","b1c3","a7a6"],
     pgn: "1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6",
     desc: "费舍尔和卡斯帕罗夫的最爱。a6防止Bb5同时准备b5反击。理论极深，是顶级赛事中最常见的开局之一。",
@@ -576,7 +580,7 @@ const OPENINGS = [
   },
   {
     name: "斯堪的纳维亚防御", nameEn: "Scandinavian Defense", eco: "B01",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","d7d5"],
     pgn: "1.e4 d5",
     desc: "黑方立即用d5挑战e4。简单直接，但后走出后早容易被白方获得时间优势。",
@@ -605,7 +609,7 @@ const OPENINGS = [
   },
   {
     name: "皮尔茨防御", nameEn: "Pirc Defense", eco: "B07-B09",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","d7d6","d2d4","g8f6","b1c3","g7g6"],
     pgn: "1.e4 d6 2.d4 Nf6 3.Nc3 g6",
     desc: "黑方采用超现代理念，允许白方占据中心然后从侧翼反击。g6准备fianchetto象到g7。",
@@ -639,7 +643,7 @@ const OPENINGS = [
   // === Queen's Pawn (1.d4) ===
   {
     name: "后翼弃兵", nameEn: "Queen's Gambit", eco: "D06-D69",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "white",
     moves: ["d2d4","d7d5","c2c4"],
     pgn: "1.d4 d5 2.c4",
     desc: "白方用c4挑战黑方中心兵。并非真正的弃兵，因为白方通常能夺回。是最经典的d4开局。",
@@ -670,7 +674,7 @@ const OPENINGS = [
   },
   {
     name: "后翼弃兵接受", nameEn: "Queen's Gambit Accepted", eco: "D20-D29",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "white",
     moves: ["d2d4","d7d5","c2c4","d5c4"],
     pgn: "1.d4 d5 2.c4 dxc4",
     desc: "黑方接受弃兵吃掉c4。白方获得强大的中心，黑方试图保住多兵或利用时间发展。",
@@ -701,7 +705,7 @@ const OPENINGS = [
   },
   {
     name: "斯拉夫防御", nameEn: "Slav Defense", eco: "D10-D19",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "black",
     moves: ["d2d4","d7d5","c2c4","c7c6"],
     pgn: "1.d4 d5 2.c4 c6",
     desc: "用c6支撑d5，保持c8象的出路。兼具坚固和灵活，是后翼弃兵的主要回应之一。",
@@ -732,7 +736,7 @@ const OPENINGS = [
   },
   {
     name: "尼姆佐-印度防御", nameEn: "Nimzo-Indian Defense", eco: "E20-E59",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "black",
     moves: ["d2d4","g8f6","c2c4","e7e6","b1c3","f8b4"],
     pgn: "1.d4 Nf6 2.c4 e6 3.Nc3 Bb4",
     desc: "黑方用Bb4钉住c3马，控制e4。是最受尊敬的防御之一，曾被卡帕布兰卡等世界冠军使用。",
@@ -765,7 +769,7 @@ const OPENINGS = [
   },
   {
     name: "国王印度防御", nameEn: "King's Indian Defense", eco: "E60-E99",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "black",
     moves: ["d2d4","g8f6","c2c4","g7g6","b1c3","f8g7","e2e4","d7d6"],
     pgn: "1.d4 Nf6 2.c4 g6 3.Nc3 Bg7 4.e4 d6",
     desc: "黑方允许白方建立大中心然后王翼猛攻。局面充满张力，是最具战斗性的防御之一。卡斯帕罗夫和费舍尔的武器。",
@@ -807,7 +811,7 @@ const OPENINGS = [
   },
   {
     name: "格林菲尔德防御", nameEn: "Grünfeld Defense", eco: "D70-D99",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "black",
     moves: ["d2d4","g8f6","c2c4","g7g6","b1c3","d7d5"],
     pgn: "1.d4 Nf6 2.c4 g6 3.Nc3 d5",
     desc: "黑方用d5直接挑战白方中心，然后利用g7象从远处施压。卡斯帕罗夫在世界冠军赛中的主要武器。",
@@ -840,7 +844,7 @@ const OPENINGS = [
   },
   {
     name: "荷兰防御", nameEn: "Dutch Defense", eco: "A80-A99",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "black",
     moves: ["d2d4","f7f5"],
     pgn: "1.d4 f5",
     desc: "黑方用f5控制e4，寻求王翼攻击机会。大胆但稍弱化王翼安全。",
@@ -870,7 +874,7 @@ const OPENINGS = [
   // === Flank Openings ===
   {
     name: "英国开局", nameEn: "English Opening", eco: "A10-A39",
-    category: "侧翼开局",
+    category: "侧翼开局", playerSide: "white",
     moves: ["c2c4"],
     pgn: "1.c4",
     desc: "侧翼开局的代表，控制d5而非直接占据中心。灵活多变，可转入多种局面类型。",
@@ -898,7 +902,7 @@ const OPENINGS = [
   },
   {
     name: "列蒂开局", nameEn: "Réti Opening", eco: "A04-A09",
-    category: "侧翼开局",
+    category: "侧翼开局", playerSide: "white",
     moves: ["g1f3","d7d5","c2c4"],
     pgn: "1.Nf3 d5 2.c4",
     desc: "超现代开局，不急于占据中心，用马和侧翼兵来控制。以捷克大师列蒂命名。",
@@ -928,7 +932,7 @@ const OPENINGS = [
   },
   {
     name: "国王印度进攻", nameEn: "King's Indian Attack", eco: "A07-A08",
-    category: "侧翼开局",
+    category: "侧翼开局", playerSide: "white",
     moves: ["g1f3","d7d5","g2g3"],
     pgn: "1.Nf3 d5 2.g3",
     desc: "白方采用与国王印度防御镜像的设置：Nf3, g3, Bg2, O-O, d3。灵活的体系开局，费舍尔曾多次使用。",
@@ -958,7 +962,7 @@ const OPENINGS = [
   },
   {
     name: "飞象开局", nameEn: "Catalan Opening", eco: "E01-E09",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "white",
     moves: ["d2d4","g8f6","c2c4","e7e6","g2g3"],
     pgn: "1.d4 Nf6 2.c4 e6 3.g3",
     desc: "白方结合d4+c4的中心控制与g3侧翼象发展。长对角线上的象非常强大。当今顶级赛事中极受欢迎。",
@@ -990,7 +994,7 @@ const OPENINGS = [
   },
   {
     name: "伦敦体系", nameEn: "London System", eco: "D02",
-    category: "d4 开局",
+    category: "d4 开局", playerSide: "white",
     moves: ["d2d4","d7d5","c1f4"],
     pgn: "1.d4 d5 2.Bf4",
     desc: "白方早期出象到f4，形成稳定的兵结构（d4-e3-c3）。容易学习，计划明确，适合各水平棋手。",
@@ -1020,7 +1024,7 @@ const OPENINGS = [
   },
   {
     name: "王翼弃兵", nameEn: "King's Gambit", eco: "C30-C39",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "white",
     moves: ["e2e4","e7e5","f2f4"],
     pgn: "1.e4 e5 2.f4",
     desc: "浪漫主义时代的标志性开局。白方弃f兵换取中心控制和快速进攻。大胆激进但有一定风险。",
@@ -1051,7 +1055,7 @@ const OPENINGS = [
   },
   {
     name: "维也纳开局", nameEn: "Vienna Game", eco: "C25-C29",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "white",
     moves: ["e2e4","e7e5","b1c3"],
     pgn: "1.e4 e5 2.Nc3",
     desc: "白方用Nc3代替Nf3，保留f2-f4的推进可能。灵活且有攻击潜力，可转入多种局面。",
@@ -1081,7 +1085,7 @@ const OPENINGS = [
   },
   {
     name: "阿廖欣防御", nameEn: "Alekhine's Defense", eco: "B02-B05",
-    category: "e4 开局",
+    category: "e4 开局", playerSide: "black",
     moves: ["e2e4","g8f6"],
     pgn: "1.e4 Nf6",
     desc: "黑方用马引诱白方兵推进，然后攻击过度扩展的兵链。以世界冠军阿廖欣命名。",
@@ -1392,10 +1396,12 @@ renderLibrary();
 // ============================================================
 // Practice Mode: Follow the opening moves
 // ============================================================
-let practiceState = { opening: null, board: null, moveIndex: 0, selected: null, streak: 0 };
+let practiceState = { opening: null, board: null, moveIndex: 0, selected: null, streak: 0, autoPlaying: false, maxMoveIndex: 0, browsing: false };
+let autoPlayTimeout = null;
 
 function startPractice(opening) {
-  practiceState = { opening, board: cloneBoard(INITIAL_BOARD), moveIndex: 0, selected: null, streak: practiceState.streak };
+  if (autoPlayTimeout) { clearTimeout(autoPlayTimeout); autoPlayTimeout = null; }
+  practiceState = { opening, board: cloneBoard(INITIAL_BOARD), moveIndex: 0, selected: null, streak: practiceState.streak, autoPlaying: false, maxMoveIndex: 0, browsing: false };
   document.getElementById('practice-name').textContent = opening.name.length > 12 ? opening.name.substring(0,12)+'…' : opening.name;
   document.getElementById('practice-title').textContent = opening.name;
   document.getElementById('practice-desc').textContent = opening.desc;
@@ -1410,6 +1416,8 @@ function startPractice(opening) {
   document.getElementById('demo-nav').style.display = 'none';
   demoPlaying = false;
   demoState = null;
+  updateNavButtons();
+  autoPlayOpponent();
 }
 
 function updatePracticeProgress() {
@@ -1456,10 +1464,26 @@ let practiceSelected = null;
 function onPracticeClick(row, col, piece) {
   if (!practiceState.opening) return;
   if (demoPlaying) return;
+  if (practiceState.autoPlaying) return;
   if (practiceState.moveIndex >= practiceState.opening.moves.length) return;
+
+  // 如果在浏览历史走法，点击棋盘回到当前位置
+  if (practiceState.browsing) {
+    practiceState.moveIndex = practiceState.maxMoveIndex;
+    practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
+    practiceState.browsing = false;
+    renderBoard('practice-board', practiceState.board, onPracticeClick);
+    updatePracticeProgress();
+    renderPracticeMoves();
+    updateNavButtons();
+    hideFeedback('practice-feedback');
+    return;
+  }
+
   hideAllTips();
 
   const expectedMove = practiceState.opening.moves[practiceState.moveIndex];
+  const playerSide = practiceState.opening.playerSide || 'white';
   const isWhiteTurn = practiceState.moveIndex % 2 === 0;
 
   if (practiceSelected === null) {
@@ -1467,7 +1491,8 @@ function onPracticeClick(row, col, piece) {
     if (!piece) return;
     const isWhitePiece = piece === piece.toUpperCase();
     if (isWhiteTurn !== isWhitePiece) {
-      showFeedback('practice-feedback', isWhiteTurn ? '现在轮到白方走棋，请选择白色棋子' : '现在轮到黑方走棋，请选择黑色棋子', 'info');
+      const sideMsg = playerSide === 'white' ? '你执白方，请选择白色棋子' : '你执黑方，请选择黑色棋子';
+      showFeedback('practice-feedback', sideMsg, 'info');
       return;
     }
     practiceSelected = { row, col };
@@ -1488,19 +1513,23 @@ function onPracticeClick(row, col, piece) {
       const justCompletedIdx = practiceState.moveIndex;
       practiceState.board = applyMove(practiceState.board, moveStr);
       practiceState.moveIndex++;
+      practiceState.maxMoveIndex = practiceState.moveIndex;
+      practiceState.browsing = false;
       practiceState.streak++;
       renderBoard('practice-board', practiceState.board, onPracticeClick);
       highlightSquare('practice-board', row, col, 'correct');
       updatePracticeProgress();
       renderPracticeMoves();
+      updateNavButtons();
 
       // Auto-comment from assistant
       autoExplainMove(justCompletedIdx);
 
       if (practiceState.moveIndex >= practiceState.opening.moves.length) {
-        showFeedback('practice-feedback', `🎉 完美！你完成了「${practiceState.opening.name}」的所有走法！`, 'success');
+        showFeedback('practice-feedback', '完美！你完成了「' + practiceState.opening.name + '」的所有走法！', 'success');
       } else {
         hideFeedback('practice-feedback');
+        autoPlayOpponent();
       }
     } else {
       // Wrong
@@ -1511,6 +1540,89 @@ function onPracticeClick(row, col, piece) {
     }
   }
 }
+
+function autoPlayOpponent() {
+  if (!practiceState.opening) return;
+  if (practiceState.moveIndex >= practiceState.opening.moves.length) return;
+  const opening = practiceState.opening;
+  const playerSide = opening.playerSide || 'white';
+  const isWhiteTurn = practiceState.moveIndex % 2 === 0;
+  const isPlayerTurn = (playerSide === 'white' && isWhiteTurn) || (playerSide === 'black' && !isWhiteTurn);
+  if (isPlayerTurn) return;
+
+  practiceState.autoPlaying = true;
+  autoPlayTimeout = setTimeout(() => {
+    const move = opening.moves[practiceState.moveIndex];
+    const justCompletedIdx = practiceState.moveIndex;
+    practiceState.board = applyMove(practiceState.board, move);
+    practiceState.moveIndex++;
+    practiceState.maxMoveIndex = practiceState.moveIndex;
+    renderBoard('practice-board', practiceState.board, onPracticeClick);
+    const tc = move.charCodeAt(2) - 97, tr = 8 - parseInt(move[3]);
+    setHighlight('practice-board', tr, tc, true);
+    updatePracticeProgress();
+    renderPracticeMoves();
+    autoExplainMove(justCompletedIdx);
+    updateNavButtons();
+    practiceState.autoPlaying = false;
+
+    if (practiceState.moveIndex >= opening.moves.length) {
+      showFeedback('practice-feedback', '完美！你完成了「' + opening.name + '」的所有走法！', 'success');
+      return;
+    }
+    // 递归检查是否还需要继续自动走（连续对手走法）
+    autoPlayOpponent();
+  }, 500);
+}
+
+function navigateBack() {
+  if (!practiceState.opening || practiceState.moveIndex <= 0) return;
+  if (autoPlayTimeout) { clearTimeout(autoPlayTimeout); autoPlayTimeout = null; }
+  practiceState.autoPlaying = false;
+  practiceState.moveIndex--;
+  practiceState.browsing = practiceState.moveIndex < practiceState.maxMoveIndex;
+  practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
+  renderBoard('practice-board', practiceState.board, onPracticeClick);
+  updatePracticeProgress();
+  renderPracticeMoves();
+  updateNavButtons();
+  practiceSelected = null;
+  hideAllTips();
+  hideFeedback('practice-feedback');
+}
+
+function navigateForward() {
+  if (!practiceState.opening || practiceState.moveIndex >= practiceState.maxMoveIndex) return;
+  practiceState.moveIndex++;
+  practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
+  practiceState.browsing = practiceState.moveIndex < practiceState.maxMoveIndex;
+  renderBoard('practice-board', practiceState.board, onPracticeClick);
+  updatePracticeProgress();
+  renderPracticeMoves();
+  updateNavButtons();
+  practiceSelected = null;
+  if (!practiceState.browsing) {
+    // 回到当前位置，触发自动走对手
+    autoPlayOpponent();
+  }
+}
+
+function updateNavButtons() {
+  const backBtn = document.getElementById('nav-back');
+  const fwdBtn = document.getElementById('nav-forward');
+  if (!backBtn || !fwdBtn) return;
+  backBtn.disabled = !practiceState.opening || practiceState.moveIndex <= 0;
+  fwdBtn.disabled = !practiceState.opening || practiceState.moveIndex >= practiceState.maxMoveIndex;
+}
+
+// 键盘快捷键：左右箭头导航
+document.addEventListener('keydown', function(e) {
+  // 只在练习面板激活时响应
+  const practicePanel = document.getElementById('panel-practice');
+  if (!practicePanel || !practicePanel.classList.contains('active')) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); navigateBack(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); navigateForward(); }
+});
 
 function showHint() {
   if (!practiceState.opening || practiceState.moveIndex >= practiceState.opening.moves.length) return;
