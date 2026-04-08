@@ -124,6 +124,11 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
 .speech-bubble.white-bubble::after { bottom: 16px; border-left-color: #e0c068; }
 .speech-bubble.black-bubble { border-color: #9ec5e0; }
 .speech-bubble.black-bubble::after { top: 16px; border-left-color: #9ec5e0; }
+.speech-bubble.error-bubble { border-color: #f44336; background: rgba(60,20,20,0.95); }
+.speech-bubble.error-bubble::after { border-left-color: #f44336; }
+.speech-bubble.error-bubble .tip-side { color: #f44336; }
+.mistake-btn { display: inline-block; margin-top: 8px; padding: 6px 14px; background: #e0c068; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-size: 0.82em; font-weight: 600; width: 100%; text-align: center; transition: background 0.2s; }
+.mistake-btn:hover { background: #c8a84e; }
 .speech-bubble .tip-side { font-weight: 600; }
 .speech-bubble.white-bubble .tip-side { color: #e0c068; }
 .speech-bubble.black-bubble .tip-side { color: #9ec5e0; }
@@ -1532,13 +1537,147 @@ function onPracticeClick(row, col, piece) {
         autoPlayOpponent();
       }
     } else {
-      // Wrong
+      // Wrong move
       practiceState.streak = 0;
+      practiceSelected = null;
       updatePracticeProgress();
       highlightSquare('practice-board', row, col, 'wrong');
-      showFeedback('practice-feedback', '走法不对，再试试！点击棋子重新选择。', 'error');
+      showMistakeFeedback(moveStr);
     }
   }
+}
+
+let punishmentState = null;
+
+function showMistakeFeedback(wrongMoveStr) {
+  const opening = practiceState.opening;
+  if (!opening) return;
+  const moveIdx = practiceState.moveIndex;
+  const isWhite = moveIdx % 2 === 0;
+  const side = isWhite ? 'white' : 'black';
+  const sideLabel = isWhite ? '❌ 白方' : '❌ 黑方';
+
+  const mistake = opening.mistakes && opening.mistakes.find(
+    m => m.atMove === moveIdx && m.wrong === wrongMoveStr
+  );
+
+  const tip = document.getElementById(side === 'white' ? 'tip-white' : 'tip-black');
+  tip.innerHTML = '';
+
+  if (mistake) {
+    const sideSpan = document.createElement('span');
+    sideSpan.className = 'tip-side';
+    sideSpan.textContent = sideLabel;
+    tip.appendChild(sideSpan);
+    tip.appendChild(document.createTextNode(' ' + mistake.explain));
+
+    const btn = document.createElement('button');
+    btn.className = 'mistake-btn';
+    btn.textContent = '👁 看看后果';
+    btn.onclick = playPunishment;
+    tip.appendChild(btn);
+
+    const dismiss = document.createElement('span');
+    dismiss.className = 'tip-dismiss';
+    dismiss.textContent = '点击泡泡关闭';
+    tip.appendChild(dismiss);
+
+    tip.className = 'speech-bubble error-bubble show';
+    punishmentState = { mistake, boardBeforeWrong: cloneBoard(practiceState.board), wrongMove: wrongMoveStr };
+  } else {
+    const correctMove = opening.moves[moveIdx];
+    const explain = opening.moveExplain && opening.moveExplain[moveIdx] ? opening.moveExplain[moveIdx] : '';
+
+    const sideSpan = document.createElement('span');
+    sideSpan.className = 'tip-side';
+    sideSpan.textContent = sideLabel;
+    tip.appendChild(sideSpan);
+    tip.appendChild(document.createTextNode(' 这步不是主线走法。正确走法：' + moveToNotation(correctMove, moveIdx)));
+
+    if (explain) {
+      const small = document.createElement('small');
+      small.style.cssText = 'color:#aaa;display:block;margin-top:4px;';
+      small.textContent = explain;
+      tip.appendChild(small);
+    }
+
+    const dismiss = document.createElement('span');
+    dismiss.className = 'tip-dismiss';
+    dismiss.textContent = '点击泡泡关闭';
+    tip.appendChild(dismiss);
+
+    tip.className = 'speech-bubble error-bubble show';
+    punishmentState = null;
+  }
+}
+
+function playPunishment() {
+  if (!punishmentState) return;
+  const { mistake, boardBeforeWrong, wrongMove } = punishmentState;
+
+  let board = applyMove(boardBeforeWrong, wrongMove);
+  const boards = [board];
+  for (const m of mistake.punishment) {
+    board = applyMove(board, m);
+    boards.push(cloneBoard(board));
+  }
+
+  practiceState.autoPlaying = true;
+  hideAllTips();
+
+  renderBoard('practice-board', boards[0], onPracticeClick);
+  const wtc = wrongMove.charCodeAt(2) - 97, wtr = 8 - parseInt(wrongMove[3]);
+  highlightSquare('practice-board', wtr, wtc, 'wrong');
+
+  let step = 0;
+  const interval = setInterval(() => {
+    if (step >= mistake.punishment.length) {
+      clearInterval(interval);
+      const isWhite = practiceState.moveIndex % 2 === 0;
+      const side = isWhite ? 'white' : 'black';
+      const tip = document.getElementById(side === 'white' ? 'tip-white' : 'tip-black');
+      tip.innerHTML = '';
+
+      const sideSpan = document.createElement('span');
+      sideSpan.className = 'tip-side';
+      sideSpan.style.color = '#f44336';
+      sideSpan.textContent = '💡 后果';
+      tip.appendChild(sideSpan);
+      tip.appendChild(document.createTextNode(' ' + mistake.punchline));
+
+      const btn = document.createElement('button');
+      btn.className = 'mistake-btn';
+      btn.textContent = '↩ 回到正确位置';
+      btn.onclick = revertFromPunishment;
+      tip.appendChild(btn);
+
+      const dismiss = document.createElement('span');
+      dismiss.className = 'tip-dismiss';
+      dismiss.textContent = '点击泡泡关闭';
+      tip.appendChild(dismiss);
+
+      tip.className = 'speech-bubble error-bubble show';
+      return;
+    }
+
+    renderBoard('practice-board', boards[step + 1], onPracticeClick);
+    const m = mistake.punishment[step];
+    const tc = m.charCodeAt(2) - 97, tr = 8 - parseInt(m[3]);
+    setHighlight('practice-board', tr, tc, true);
+    step++;
+  }, 800);
+}
+
+function revertFromPunishment() {
+  if (!punishmentState) return;
+  practiceState.board = punishmentState.boardBeforeWrong;
+  renderBoard('practice-board', practiceState.board, onPracticeClick);
+  practiceState.autoPlaying = false;
+  practiceSelected = null;
+  punishmentState = null;
+  hideAllTips();
+  hideFeedback('practice-feedback');
+  showFeedback('practice-feedback', '再试一次吧！', 'info');
 }
 
 function autoPlayOpponent() {
