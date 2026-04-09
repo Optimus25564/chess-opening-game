@@ -1747,11 +1747,11 @@ document.addEventListener('keydown', function(e) {
   if (!practicePanel || !practicePanel.classList.contains('active')) return;
   if (e.key === 'ArrowLeft') {
     e.preventDefault();
-    if (demoPlaying && demoState) demoPrev();
+    if (demoState) demoPrev();
     else navigateBack();
   } else if (e.key === 'ArrowRight') {
     e.preventDefault();
-    if (demoPlaying && demoState) demoAdvance();
+    if (demoState) demoAdvance();
     else navigateForward();
   }
 });
@@ -2003,22 +2003,24 @@ function playDemo(btnId) {
   if (btn) btn.style.display = 'none';
 
   demoPlaying = true;
-  // Build board from scratch to ensure correctness
-  let baseBoard = cloneBoard(INITIAL_BOARD);
-  for (const m of o.moves) baseBoard = applyMove(baseBoard, m);
-  // Pre-compute all board states for prev/next
-  const boards = [cloneBoard(baseBoard)];
-  let b = baseBoard;
-  for (const m of o.continuation.moves) {
+  // Build ALL board states: initial → opening moves → continuation moves
+  const allMoves = [...o.moves, ...o.continuation.moves];
+  const allExplain = [...(o.moveExplain || []), ...o.continuation.explain];
+  const boards = [cloneBoard(INITIAL_BOARD)];
+  let b = cloneBoard(INITIAL_BOARD);
+  for (const m of allMoves) {
     b = applyMove(b, m);
     boards.push(cloneBoard(b));
   }
+  const openingLen = o.moves.length;
   demoState = {
-    cont: o.continuation,
+    allMoves: allMoves,
+    allExplain: allExplain,
     boards: boards,
-    step: 0,
+    openingLen: openingLen,
+    step: openingLen,  // start at the end of opening (beginning of continuation)
     msgCount: 0,
-    sideOffset: o.moves.length % 2  // 0 = continuation starts with white, 1 = starts with black
+    total: allMoves.length
   };
 
   demoState.msgCount = 0;
@@ -2029,8 +2031,7 @@ function playDemo(btnId) {
 
 function demoShowStep(idx) {
   if (!demoState) return;
-  const { cont, boards } = demoState;
-  const total = cont.moves.length;
+  const { allMoves, allExplain, boards, openingLen, total } = demoState;
   idx = Math.max(0, Math.min(idx, total));
   demoState.step = idx;
 
@@ -2039,9 +2040,8 @@ function demoShowStep(idx) {
 
   // Highlight destination square and detect capture
   if (idx > 0) {
-    const move = cont.moves[idx - 1];
+    const move = allMoves[idx - 1];
     const tc = move.charCodeAt(2) - 97, tr = 8 - parseInt(move[3]);
-    // Check if this move was a capture: target square was occupied in previous board
     const prevBoard = boards[idx - 1];
     const wasCapture = prevBoard[tr][tc] !== '';
     setHighlight('practice-board', tr, tc, true);
@@ -2050,25 +2050,31 @@ function demoShowStep(idx) {
     }
   }
 
-  // Show explanation bubble — use sideOffset to determine correct color
+  // Show explanation bubble
   hideAllTips();
-  if (idx > 0 && cont.explain && cont.explain[idx - 1]) {
+  if (idx > 0 && allExplain[idx - 1]) {
     const i = idx - 1;
-    const isWhite = (i + demoState.sideOffset) % 2 === 0;
+    const isWhite = i % 2 === 0;  // move 0=white, 1=black, etc (from the very start)
     const sideLabel = isWhite ? '<span class="tip-side">⬜</span>' : '<span class="tip-side">⬛</span>';
-    showTip(isWhite ? 'white' : 'black', `${sideLabel} ${cont.explain[i]}`);
+    showTip(isWhite ? 'white' : 'black', `${sideLabel} ${allExplain[i]}`);
   }
 
-  // Update side panel messages — only add new ones going forward
-  if (idx > demoState.msgCount && cont.explain) {
-    for (let j = demoState.msgCount; j < idx; j++) {
-      if (cont.explain[j]) {
-        const isWhite = (j + demoState.sideOffset) % 2 === 0;
+  // Label: which phase are we in?
+  const inOpening = idx <= openingLen;
+  const contStep = idx - openingLen;
+  const contTotal = total - openingLen;
+
+  // Add messages for continuation steps only (going forward)
+  if (contStep > 0 && contStep > demoState.msgCount) {
+    for (let j = demoState.msgCount; j < contStep; j++) {
+      const mi = openingLen + j;
+      if (allExplain[mi]) {
+        const isWhite = mi % 2 === 0;
         const sideIcon = isWhite ? '⬜' : '⬛';
-        addDemoMsg(`${sideIcon} ${cont.explain[j]}`);
+        addDemoMsg(`${sideIcon} ${allExplain[mi]}`);
       }
     }
-    demoState.msgCount = idx;
+    demoState.msgCount = contStep;
   }
 
   // Update buttons
@@ -2076,25 +2082,26 @@ function demoShowStep(idx) {
   const advBtn = document.getElementById('demo-advance');
   prevBtn.disabled = idx <= 0;
   if (idx >= total) {
-    advBtn.textContent = '结束演示';
+    advBtn.textContent = '← 可后退浏览';
+    advBtn.disabled = true;
   } else {
-    advBtn.textContent = `下一步 → (${idx}/${total})`;
+    advBtn.disabled = false;
+    if (inOpening) {
+      advBtn.textContent = `下一步 → 开局 (${idx}/${openingLen})`;
+    } else {
+      advBtn.textContent = `下一步 → (${contStep}/${contTotal})`;
+    }
   }
 }
 
 function demoAdvance() {
   if (!demoState) return;
-  if (demoState.step >= demoState.cont.moves.length) {
-    // End demo
-    demoPlaying = false;
-    hideAllTips();
-    addDemoMsg('✓ 演示结束！点「重新开始」可以重新练习。');
-    document.getElementById('demo-nav').style.display = 'none';
-    document.body.classList.remove('panel-practice-demo-active');
-    demoState = null;
-    return;
-  }
+  if (demoState.step >= demoState.total) return;
   demoShowStep(demoState.step + 1);
+  // Show completion message when reaching the end
+  if (demoState.step >= demoState.total) {
+    addDemoMsg('✓ 演示结束！可以按 ← 回看，或点「重新开始」重新练习。');
+  }
 }
 
 function demoPrev() {
