@@ -1189,12 +1189,17 @@ function boardAfterMoves(moves) {
   return b;
 }
 
+let boardFlipped = false;
+
 function renderBoard(containerId, board, onClick) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   const files = 'abcdefgh';
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  const flipped = boardFlipped;
+  for (let ri = 0; ri < 8; ri++) {
+    for (let ci = 0; ci < 8; ci++) {
+      const r = flipped ? 7 - ri : ri;
+      const c = flipped ? 7 - ci : ci;
       const sq = document.createElement('div');
       sq.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       sq.dataset.row = r;
@@ -1206,15 +1211,15 @@ function renderBoard(containerId, board, onClick) {
         svgWrapper.innerHTML = PIECE_SVG[piece]();
         sq.appendChild(svgWrapper);
       }
-      // Rank numbers on leftmost column
-      if (c === 0) {
+      // Rank numbers on leftmost display column
+      if (ci === 0) {
         const rank = document.createElement('span');
         rank.className = 'coord-rank';
         rank.textContent = 8 - r;
         sq.appendChild(rank);
       }
-      // File letters on bottom row
-      if (r === 7) {
+      // File letters on bottom display row
+      if (ri === 7) {
         const file = document.createElement('span');
         file.className = 'coord-file';
         file.textContent = files[c];
@@ -1226,15 +1231,21 @@ function renderBoard(containerId, board, onClick) {
   }
 }
 
-function highlightSquare(containerId, row, col, cls) {
+function findSquare(containerId, row, col) {
   const container = document.getElementById(containerId);
-  const sq = container.children[row * 8 + col];
+  for (const sq of container.children) {
+    if (sq.dataset.row == row && sq.dataset.col == col) return sq;
+  }
+  return null;
+}
+
+function highlightSquare(containerId, row, col, cls) {
+  const sq = findSquare(containerId, row, col);
   if (sq) { sq.classList.add(cls); setTimeout(() => sq.classList.remove(cls), 600); }
 }
 
 function setHighlight(containerId, row, col, on) {
-  const container = document.getElementById(containerId);
-  const sq = container.children[row * 8 + col];
+  const sq = findSquare(containerId, row, col);
   if (sq) { if (on) sq.classList.add('highlight'); else sq.classList.remove('highlight'); }
 }
 
@@ -1321,6 +1332,8 @@ let autoPlayTimeout = null;
 function startPractice(opening) {
   if (autoPlayTimeout) { clearTimeout(autoPlayTimeout); autoPlayTimeout = null; }
   practiceState = { opening, board: cloneBoard(INITIAL_BOARD), moveIndex: 0, selected: null, streak: practiceState.streak, autoPlaying: false, maxMoveIndex: 0, browsing: false };
+  // Flip board when player is black
+  boardFlipped = (opening.playerSide === 'black');
   document.getElementById('practice-name').textContent = opening.name.length > 12 ? opening.name.substring(0,12)+'…' : opening.name;
   document.getElementById('practice-title').textContent = opening.name;
   document.getElementById('practice-desc').textContent = opening.desc;
@@ -1747,9 +1760,11 @@ function showQuizQuestion() {
   hideFeedback('quiz-feedback');
   document.getElementById('quiz-next').style.display = 'none';
 
-  // Show board
+  // Show board (always from white's perspective in quiz)
+  const savedFlipped = boardFlipped; boardFlipped = false;
   const board = boardAfterMoves(qObj.opening.moves);
   renderBoard('quiz-board', board);
+  boardFlipped = savedFlipped;
 
   // Show question
   document.getElementById('quiz-question').textContent = qObj.q;
@@ -1825,9 +1840,11 @@ function showGuessQuestion() {
   hideFeedback('guess-feedback');
   document.getElementById('guess-next').style.display = 'none';
 
-  // Render target position
+  // Render target position (always from white's perspective in guess)
+  const savedFlipped = boardFlipped; boardFlipped = false;
   const board = boardAfterMoves(target.moves);
   renderBoard('guess-board', board);
+  boardFlipped = savedFlipped;
 
   // Show hint with move count
   document.getElementById('guess-hint').textContent = `这个局面经过了 ${target.moves.length} 步棋，属于「${target.category}」类别。`;
