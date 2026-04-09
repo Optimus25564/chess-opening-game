@@ -1223,8 +1223,14 @@ function applyMove(board, moveStr) {
   const fc = moveStr.charCodeAt(0) - 97, fr = 8 - parseInt(moveStr[1]);
   const tc = moveStr.charCodeAt(2) - 97, tr = 8 - parseInt(moveStr[3]);
   const b = cloneBoard(board);
-  b[tr][tc] = b[fr][fc];
+  const piece = b[fr][fc];
+  b[tr][tc] = piece;
   b[fr][fc] = '';
+  // Castling: move the rook too
+  if (piece === 'K' || piece === 'k') {
+    if (fc === 4 && tc === 6) { b[fr][5] = b[fr][7]; b[fr][7] = ''; } // King-side O-O
+    if (fc === 4 && tc === 2) { b[fr][3] = b[fr][0]; b[fr][0] = ''; } // Queen-side O-O-O
+  }
   return b;
 }
 
