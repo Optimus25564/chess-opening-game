@@ -1695,13 +1695,19 @@ function updateNavButtons() {
   fwdBtn.disabled = !practiceState.opening || practiceState.moveIndex >= practiceState.maxMoveIndex;
 }
 
-// 键盘快捷键：左右箭头导航
+// 键盘快捷键：左右箭头导航（练习 + demo 模式）
 document.addEventListener('keydown', function(e) {
-  // 只在练习面板激活时响应
   const practicePanel = document.getElementById('panel-practice');
   if (!practicePanel || !practicePanel.classList.contains('active')) return;
-  if (e.key === 'ArrowLeft') { e.preventDefault(); navigateBack(); }
-  else if (e.key === 'ArrowRight') { e.preventDefault(); navigateForward(); }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    if (demoPlaying && demoState) demoPrev();
+    else navigateBack();
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (demoPlaying && demoState) demoAdvance();
+    else navigateForward();
+  }
 });
 
 function showHint() {
@@ -1936,9 +1942,9 @@ function showDemoPanel() {
   const msgs = document.getElementById('demo-messages');
   panel.style.display = '';
   msgs.innerHTML = '';
-  addDemoMsg(`<b>${o.continuation.label}</b><br>开局走完后，接下来通常这样发展：`);
-  const demoId = 'demo-' + Date.now();
-  addDemoMsg(`<button class="demo-btn" id="${demoId}" onclick="playDemo('${demoId}')">▶ 在棋盘上演示</button>`);
+  addDemoMsg(`<b>${o.continuation.label}</b><br>用 ← → 键逐步浏览后续走法`);
+  // Auto-start demo without requiring button click
+  playDemo(null);
 }
 
 let demoPlaying = false;
@@ -1967,7 +1973,6 @@ function playDemo(btnId) {
     sideOffset: o.moves.length % 2  // 0 = continuation starts with white, 1 = starts with black
   };
 
-  addDemoMsg('用 <b>← →</b> 按钮逐步浏览');
   demoState.msgCount = 0;
   document.getElementById('demo-nav').style.display = '';
   demoShowStep(0);
