@@ -41,10 +41,12 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
 .square .coord-file { bottom: 1px; right: 3px; }
 .square.light .coord-file, .square.light .coord-rank { color: #b58863; }
 .square.dark .coord-file, .square.dark .coord-rank { color: #f0d9b5; }
+/* Piece colors */
+.pc-white { color: #fff; text-shadow: 0 0 2px rgba(0,0,0,0.6); }
+.pc-black { color: #222; text-shadow: 0 0 2px rgba(255,255,255,0.3); }
 .square.light { background: #f0d9b5; }
 .square.dark { background: #b58863; }
-.square svg { pointer-events: none; }
-.square.highlight { box-shadow: inset 0 0 0 4px rgba(0, 150, 255, 0.85); }
+.square.highlight { box-shadow: inset 0 0 0 3px #e0c068; }
 .square.last-move { box-shadow: inset 0 0 0 3px rgba(224, 192, 104, 0.5); }
 .square.correct { animation: correctFlash 0.5s; }
 @keyframes correctFlash { 0%,100%{ background: inherit; } 50%{ background: #4caf50; } }
@@ -124,11 +126,6 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
 .speech-bubble.white-bubble::after { bottom: 16px; border-left-color: #e0c068; }
 .speech-bubble.black-bubble { border-color: #9ec5e0; }
 .speech-bubble.black-bubble::after { top: 16px; border-left-color: #9ec5e0; }
-.speech-bubble.error-bubble { border-color: #f44336; background: rgba(60,20,20,0.95); }
-.speech-bubble.error-bubble::after { border-left-color: #f44336; }
-.speech-bubble.error-bubble .tip-side { color: #f44336; }
-.mistake-btn { display: inline-block; margin-top: 8px; padding: 6px 14px; background: #e0c068; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-size: 0.82em; font-weight: 600; width: 100%; text-align: center; transition: background 0.2s; }
-.mistake-btn:hover { background: #c8a84e; }
 .speech-bubble .tip-side { font-weight: 600; }
 .speech-bubble.white-bubble .tip-side { color: #e0c068; }
 .speech-bubble.black-bubble .tip-side { color: #9ec5e0; }
@@ -149,18 +146,76 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
 .demo-nav .demo-btn.secondary { background: #333; color: #ccc; }
 .demo-nav .demo-btn.secondary:hover { background: #444; }
 
-/* Responsive */
+/* Responsive — tablet */
 @media (max-width: 700px) {
   .bubble-col { width: 140px; }
   .speech-bubble { font-size: 0.78em; padding: 8px 10px; }
 }
-@media (max-width: 600px) {
-  .board { grid-template-columns: repeat(8, 42px); grid-template-rows: repeat(8, 42px); }
-  .square { width: 42px; height: 42px; font-size: 28px; }
-  .square .coord-file, .square .coord-rank { font-size: 8px; }
-  .quiz-options { grid-template-columns: 1fr; }
-  .bubble-col { width: 120px; }
-  .speech-bubble { font-size: 0.75em; padding: 7px 8px; }
+
+/* Responsive — mobile */
+@media (max-width: 520px) {
+  .container { padding: 10px 6px; overflow-x: hidden; }
+  h1 { font-size: 1.3em; margin-bottom: 4px; }
+  .subtitle { font-size: 0.82em; margin-bottom: 12px; }
+
+  /* Tabs: 2×2 grid on small screens */
+  .tabs { gap: 4px; margin-bottom: 14px; display: grid; grid-template-columns: 1fr 1fr; }
+  .tab { padding: 8px 10px; font-size: 0.82em; text-align: center; }
+
+  /* Board scales to fit screen */
+  .board-container { flex-shrink: 1; width: 100%; overflow: hidden; }
+  .board-wrapper { display: block; width: 100%; }
+  .board-with-bubbles { flex-direction: column; }
+  .board { grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; border-width: 2px; aspect-ratio: 1; }
+  .square { width: auto; height: auto; aspect-ratio: 1; font-size: min(6vw, 28px); }
+  .square .coord-file, .square .coord-rank { font-size: 7px; }
+
+  /* Bubbles stack below board, side by side */
+  .bubble-col { width: 100%; flex-direction: row; height: auto; gap: 4px; margin-top: 4px; }
+  .bubble-col .bubble-zone { flex: 1; padding: 2px; align-items: flex-start; }
+  .speech-bubble { margin-right: 0; font-size: 0.78em; padding: 8px 10px; border-radius: 8px; }
+  .speech-bubble::after { display: none; }
+
+  /* Game area stacks vertically */
+  .game-area { flex-direction: column; align-items: stretch; gap: 12px; }
+  .side-panel { min-width: unset; max-width: 100%; width: 100%; }
+
+  /* Info box compact */
+  .info-box { padding: 12px; margin-bottom: 10px; }
+  .info-box h3 { font-size: 0.95em; }
+  .info-box p { font-size: 0.85em; }
+
+  /* Score bar */
+  .score-bar { padding: 8px 10px; flex-wrap: wrap; gap: 4px; }
+  .score-item .value { font-size: 1em; }
+  .score-item .label { font-size: 0.72em; }
+
+  /* Buttons */
+  .btn { padding: 8px 14px; font-size: 0.85em; }
+  .btn-group { gap: 6px; flex-wrap: wrap; }
+
+  /* Quiz / Guess */
+  .quiz-options { grid-template-columns: 1fr; gap: 8px; }
+  .quiz-option { padding: 10px; font-size: 0.88em; }
+
+  /* Library */
+  .library-grid { grid-template-columns: 1fr; gap: 10px; }
+  .opening-card { padding: 14px; }
+  .opening-card .desc { font-size: 0.82em; }
+  .filter-bar { gap: 5px; }
+  .filter-btn { padding: 5px 10px; font-size: 0.8em; }
+
+  /* Move list */
+  .move-list { padding: 8px; font-size: 0.85em; min-height: 40px; }
+
+  /* Demo — nav sticks to bottom so board stays visible */
+  .chat-messages { max-height: 150px; }
+  .demo-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: #16213e; border-top: 2px solid #e0c068; z-index: 100; }
+  .demo-nav .demo-btn { padding: 12px 10px; font-size: 0.9em; }
+  .panel-practice-demo-active { padding-bottom: 70px; }
+
+  /* Progress bar full width */
+  .progress-bar { margin-top: 6px; }
 }
 </style>
 </head>
@@ -205,11 +260,7 @@ h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #e0c068; }
             <div class="board" id="practice-board"></div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-          <button class="btn btn-secondary" id="nav-back" onclick="navigateBack()" style="padding:6px 14px;font-size:1.1em;" title="后退" disabled>&larr;</button>
-          <div class="progress-bar" style="flex:1;margin-top:0;"><div class="progress-fill" id="practice-bar"></div></div>
-          <button class="btn btn-secondary" id="nav-forward" onclick="navigateForward()" style="padding:6px 14px;font-size:1.1em;" title="前进" disabled>&rarr;</button>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="practice-bar"></div></div>
       </div>
       <div class="side-panel">
         <div class="info-box">
@@ -305,7 +356,7 @@ const OPENINGS = [
   // === King's Pawn (1.e4) ===
   {
     name: "意大利开局", nameEn: "Italian Game", eco: "C50-C54",
-    category: "e4 开局", playerSide: "white",
+    category: "e4 开局",
     moves: ["e2e4","e7e5","g1f3","b8c6","f1c4","f8c5"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5",
     desc: "最古老的开局之一，白方将象指向f7弱点，争夺中心控制权。局面开放，双方快速出子。",
@@ -320,33 +371,17 @@ const OPENINGS = [
     ],
     continuation: {
       label: "意大利开局典型续招",
-      moves: ["c2c3","g8f6","d2d4","e5d4","c3d4","f8b4","b1c3"],
-      explain: ["c3：准备d4中心突破","Nf6：黑方发展马","d4：白方推进中心！这是意大利开局的关键时刻","exd4：黑方被迫吃掉","cxd4：白方获得强大的兵中心","Bb4+：黑方反击，钉住马","Nc3：挡住将军，进入活跃局面"]
+      moves: ["c2c3","g8f6","d2d4","e5d4","c3d4","c5b4","b1c3"],
+      explain: ["c3：准备d4中心突破","Nf6：黑方发展马","d4：白方推进中心！这是意大利开局的关键时刻","exd4：黑方被迫吃掉","cxd4：白方获得强大的兵中心","Bb4+：黑方象从c5跳到b4将军，钉住马","Nc3：挡住将军，进入活跃局面"]
     },
     quiz: [
       { q: "意大利开局中白方的象指向哪个弱点？", a: "f7", wrong: ["e5","d5","g7"] },
       { q: "意大利开局属于哪类开局？", a: "开放性开局", wrong: ["封闭性开局","半开放开局","侧翼开局"] },
-    ],
-    mistakes: [
-      {
-        atMove: 4,
-        wrong: "f1b5",
-        explain: "在意大利开局应该走Bc4把象指向f7弱点，而Bb5走的是西班牙路线——虽然也是好棋，但失去了意大利开局直接瞄准f7的攻击意图，两个开局的战略方向完全不同",
-        punishment: ["a7a6","b5a4","g8f6"],
-        punchline: "对手用a6驱赶象，白方失去了意大利开局的核心攻击角度"
-      },
-      {
-        atMove: 2,
-        wrong: "f1c4",
-        explain: "第2步就走Bc4过于急进，正确的顺序是先走Nf3攻击e5兵，迫使黑方保护，再走Bc4。过早出象在黑方Nf6反攻e4时会面临节奏损失",
-        punishment: ["g8f6","b1c3","f8c5"],
-        punchline: "黑方Nf6攻击e4，白方节奏混乱，失去开局主导权"
-      }
     ]
   },
   {
     name: "西班牙开局（卢佩兹）", nameEn: "Ruy Lopez", eco: "C60-C99",
-    category: "e4 开局", playerSide: "white",
+    category: "e4 开局",
     moves: ["e2e4","e7e5","g1f3","b8c6","f1b5"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.Bb5",
     desc: "以16世纪西班牙教士卢佩兹命名。Bb5对c6马施压，间接威胁e5兵。是最深奥的开局之一，变化极其丰富。",
@@ -360,26 +395,17 @@ const OPENINGS = [
     ],
     continuation: {
       label: "西班牙开局·莫尔菲防御",
-      moves: ["a7a6","f1b5","b5a4","g8f6","e1g1","f8e7","f1e1","b7b5","a4b3","d7d6"],
+      moves: ["a7a6","b5a4","g8f6","e1g1","f8e7","f1e1","b7b5","a4b3","d7d6"],
       explain: ["a6：莫尔菲防御！驱赶白方的象","Ba4：象退到a4保持对c6的压力","Nf6：发展马攻击e4兵","O-O：白方王车易位，国王安全","Be7：黑方发展象准备王车易位","Re1：车到e1支持e4兵","b5：黑方后翼扩展，进一步驱赶象","Bb3：象退到安全位置瞄准f7","d6：稳固中心，进入经典中局"]
     },
     quiz: [
       { q: "西班牙开局中Bb5的目的是？", a: "间接威胁e5兵", wrong: ["直接将军","攻击f7","控制d5"] },
       { q: "西班牙开局以谁命名？", a: "16世纪西班牙教士", wrong: ["意大利棋手","俄罗斯大师","法国将军"] },
-    ],
-    mistakes: [
-      {
-        atMove: 4,
-        wrong: "f1c4",
-        explain: "走Bc4是意大利开局而非西班牙开局！西班牙开局的精髓在于Bb5间接威胁e5兵（通过钉住c6马），而Bc4虽然也是好棋，但失去了西班牙开局的战略主题：对黑方子力施加长期、深远的战略压力",
-        punishment: ["f8c5","c2c3","g8f6"],
-        punchline: "进入意大利开局而非西班牙，双方结构变化，白方失去长期战略压力"
-      }
     ]
   },
   {
     name: "苏格兰开局", nameEn: "Scotch Game", eco: "C44-C45",
-    category: "e4 开局", playerSide: "white",
+    category: "e4 开局",
     moves: ["e2e4","e7e5","g1f3","b8c6","d2d4"],
     pgn: "1.e4 e5 2.Nf3 Nc6 3.d4",
     desc: "白方直接用d4挑战中心，追求快速打开局面。卡斯帕罗夫曾在世界冠军赛中使用。",
@@ -398,27 +424,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "苏格兰开局第3步白方走什么？", a: "d4", wrong: ["Bc4","Bb5","Nc3"] },
-    ],
-    mistakes: [
-      {
-        atMove: 4,
-        wrong: "f1c4",
-        explain: "走Bc4是意大利开局，而苏格兰开局的关键就是第3步直接走d4打开中心。如果改走Bc4，就完全偏离了苏格兰的进取风格，双方进入节奏较慢的意大利局面",
-        punishment: ["f8c5","d2d3","g8f6"],
-        punchline: "错过苏格兰开局的核心——立即用d4冲击中心、争取主动"
-      },
-      {
-        atMove: 4,
-        wrong: "f1b5",
-        explain: "走Bb5是西班牙开局，和苏格兰开局的理念完全相反。苏格兰追求立即打开中心，而Bb5走的是战略施压路线，两者风格迥异，贸然换路线会让前两步的时间浪费",
-        punishment: ["a7a6","b5c6","d7c6"],
-        punchline: "偏离苏格兰路线，进入西班牙开局，失去立即中心突破的机会"
-      }
     ]
   },
   {
     name: "法兰西防御", nameEn: "French Defense", eco: "C00-C19",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","e7e6","d2d4","d7d5"],
     pgn: "1.e4 e6 2.d4 d5",
     desc: "黑方用e6支撑d5，挑战白方中心。局面常形成封闭结构，黑方的坏象（c8象）是长期难题。",
@@ -437,20 +447,11 @@ const OPENINGS = [
     quiz: [
       { q: "法兰西防御中黑方的长期弱点是什么？", a: "c8坏象", wrong: ["王翼安全","兵结构","发展速度"] },
       { q: "法兰西防御的特征兵结构是？", a: "e6+d5", wrong: ["e5+d6","c5+d6","e5+c5"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "d7d5",
-        explain: "第1步直接走d5是斯堪的纳维亚防御，而法兰西防御的标志是先走e6，为下一步d5做铺垫。e6的作用是支撑d5兵，让黑方的兵结构更坚固——直接d5后白方exd5，黑后需要走出来，容易浪费时间",
-        punishment: ["e4d5","d8d5","b1c3"],
-        punchline: "黑后被迫暴露，白方Nc3发展马的同时驱赶黑后，白方获得显著的时间优势"
-      }
     ]
   },
   {
     name: "卡罗-卡恩防御", nameEn: "Caro-Kann Defense", eco: "B10-B19",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","c7c6","d2d4","d7d5"],
     pgn: "1.e4 c6 2.d4 d5",
     desc: "黑方用c6支撑d5反击中心。比法兰西防御更稳固，c8象不会被封住。适合追求坚固局面的棋手。",
@@ -468,20 +469,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "卡罗-卡恩相比法兰西防御的优势是？", a: "c8象不被封住", wrong: ["更快出子","更多进攻机会","控制更多中心"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "e7e6",
-        explain: "走e6是法兰西防御，而卡罗-卡恩的特点是先走c6！两者都为d5做准备，但区别在于：e6封住了c8象，这是法兰西防御著名的长期弱点；而c6不封住任何象，让c8象可以自由发展到f5或g4",
-        punishment: ["d2d4","d7d5","b1c3"],
-        punchline: "进入法兰西防御，c8象被e6封住成为长期弱点，失去卡罗-卡恩的核心优势"
-      }
     ]
   },
   {
     name: "西西里防御", nameEn: "Sicilian Defense", eco: "B20-B99",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","c7c5"],
     pgn: "1.e4 c5",
     desc: "最流行的对1.e4的回应。c5破坏白方的理想中心（d4），产生不对称的战斗型局面。变化分支极多。",
@@ -498,20 +490,11 @@ const OPENINGS = [
     quiz: [
       { q: "西西里防御为什么走c5？", a: "阻止白方建立理想中心d4", wrong: ["准备王翼攻击","发展c8象","控制e4"] },
       { q: "西西里防御是对哪步棋的回应？", a: "1.e4", wrong: ["1.d4","1.Nf3","1.c4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "e7e5",
-        explain: "走e5是对称应对（开放对局），而西西里防御的精髓是用c5打破对称！e5虽然也是好棋，但它把主动权交给白方；c5则阻止白方d4，产生不对称局面，让黑方有更大的赢棋机会",
-        punishment: ["g1f3","b8c6","f1c4"],
-        punchline: "进入对称的开放对局，白方可以走意大利或西班牙，黑方失去西西里防御创造不平衡局面的机会"
-      }
     ]
   },
   {
     name: "西西里防御-龙式变化", nameEn: "Sicilian Dragon", eco: "B70-B79",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","c7c5","g1f3","d7d6","d2d4","c5d4","f3d4","g8f6","b1c3","g7g6"],
     pgn: "1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 g6",
     desc: "黑方将象发展到g7形成龙形（兵结构似龙）。黑方攻击后翼，白方常发动王翼猛攻，局面非常尖锐。",
@@ -535,20 +518,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "龙式变化中g6的目的是？", a: "准备Bg7控制长对角线", wrong: ["防止Bb5","保护f7","准备h5"] },
-    ],
-    mistakes: [
-      {
-        atMove: 9,
-        wrong: "e7e5",
-        explain: "第5步走e5而非g6，会进入舍维宁根变化而非龙式！龙式的灵魂是g6-Bg7，把象放到长对角线。e5虽然争夺中心，但失去了龙式象最核心的攻击力，同时还在d6和e5之间制造了一个潜在的d5弱点",
-        punishment: ["d4b3","f8e7","f1e2"],
-        punchline: "错过龙式变化的核心——Bg7大炮无法就位，黑方失去后翼反击的最强武器"
-      }
     ]
   },
   {
     name: "西西里防御-纳伊道夫变化", nameEn: "Sicilian Najdorf", eco: "B90-B99",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","c7c5","g1f3","d7d6","d2d4","c5d4","f3d4","g8f6","b1c3","a7a6"],
     pgn: "1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6",
     desc: "费舍尔和卡斯帕罗夫的最爱。a6防止Bb5同时准备b5反击。理论极深，是顶级赛事中最常见的开局之一。",
@@ -572,20 +546,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "纳伊道夫变化中a6的作用是？", a: "防止Bb5并准备b5扩展", wrong: ["保护b7","准备Ra7","控制b5"] },
-    ],
-    mistakes: [
-      {
-        atMove: 9,
-        wrong: "e7e5",
-        explain: "走e5过早！虽然e5也能进入可玩的局面（舍维宁根或哈得逊变化），但纳伊道夫的妙处在于先走a6保持最大灵活性——a6防止Bb5、准备b5扩展，且对后续计划没有任何承诺。e5固定了局面，减少了黑方的选择空间",
-        punishment: ["d4b3","f8e7","c1e3"],
-        punchline: "放弃了纳伊道夫极致灵活性，过早固定局面，给白方更容易的应对方案"
-      }
     ]
   },
   {
     name: "斯堪的纳维亚防御", nameEn: "Scandinavian Defense", eco: "B01",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","d7d5"],
     pgn: "1.e4 d5",
     desc: "黑方立即用d5挑战e4。简单直接，但后走出后早容易被白方获得时间优势。",
@@ -601,20 +566,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "斯堪的纳维亚防御的潜在问题是？", a: "黑后过早暴露", wrong: ["中心薄弱","发展缓慢","王翼不安全"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "e7e5",
-        explain: "走e5是对称开放对局，而斯堪的纳维亚的特点就是第一步用d5直接挑战e4兵！e5选择了保守路线，黑方失去了斯堪的纳维亚防御的直接反击精神，也不再能在第一时间用d5打乱白方的开局准备",
-        punishment: ["g1f3","b8c6","f1c4"],
-        punchline: "进入对称开放对局，黑方失去斯堪的纳维亚防御第一步直接挑战中心的机会"
-      }
     ]
   },
   {
     name: "皮尔茨防御", nameEn: "Pirc Defense", eco: "B07-B09",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","d7d6","d2d4","g8f6","b1c3","g7g6"],
     pgn: "1.e4 d6 2.d4 Nf6 3.Nc3 g6",
     desc: "黑方采用超现代理念，允许白方占据中心然后从侧翼反击。g6准备fianchetto象到g7。",
@@ -634,21 +590,12 @@ const OPENINGS = [
     },
     quiz: [
       { q: "皮尔茨防御的核心思想是？", a: "允许白方占中心再反击", wrong: ["直接争夺中心","封锁中心","弃兵进攻"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "g8f6",
-        explain: "第1步直接走Nf6是阿廖欣防御，而皮尔茨防御应该先走d6！两者虽然都是超现代防御，但皮尔茨的顺序是d6先稳固再发展，直接Nf6会让白方用e5把马驱赶，进入完全不同的阿廖欣防御变化",
-        punishment: ["e4e5","f6d5","d2d4"],
-        punchline: "白方e5驱赶马，进入阿廖欣防御的四兵攻击变化，与皮尔茨的战略意图完全不同"
-      }
     ]
   },
   // === Queen's Pawn (1.d4) ===
   {
     name: "后翼弃兵", nameEn: "Queen's Gambit", eco: "D06-D69",
-    category: "d4 开局", playerSide: "white",
+    category: "d4 开局",
     moves: ["d2d4","d7d5","c2c4"],
     pgn: "1.d4 d5 2.c4",
     desc: "白方用c4挑战黑方中心兵。并非真正的弃兵，因为白方通常能夺回。是最经典的d4开局。",
@@ -666,20 +613,11 @@ const OPENINGS = [
     quiz: [
       { q: "后翼弃兵中c4的目的是？", a: "挑战黑方d5中心兵", wrong: ["发展c1象","控制b5","准备Nc3"] },
       { q: "为什么说后翼弃兵不是真正的弃兵？", a: "白方通常能夺回兵", wrong: ["黑方不能吃","这是强制走法","兵会自动回来"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "g1f3",
-        explain: "第3步走Nf3虽然是好棋，但会失去c4弃兵的机会！后翼弃兵的核心就是第2步走c4挑战d5，如果改走Nf3，后续再走c4则进入列蒂开局的框架，而非后翼弃兵的经典结构",
-        punishment: ["g8f6","c2c4","d5c4"],
-        punchline: "进入列蒂开局框架，失去后翼弃兵直接从第2步施压d5中心的战略优势"
-      }
     ]
   },
   {
     name: "后翼弃兵接受", nameEn: "Queen's Gambit Accepted", eco: "D20-D29",
-    category: "d4 开局", playerSide: "white",
+    category: "d4 开局",
     moves: ["d2d4","d7d5","c2c4","d5c4"],
     pgn: "1.d4 d5 2.c4 dxc4",
     desc: "黑方接受弃兵吃掉c4。白方获得强大的中心，黑方试图保住多兵或利用时间发展。",
@@ -697,20 +635,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "接受后翼弃兵后白方的优势是？", a: "强大的中心控制", wrong: ["多一个兵","王翼攻势","快速发展"] },
-    ],
-    mistakes: [
-      {
-        atMove: 3,
-        wrong: "c7c6",
-        explain: "走c6是斯拉夫防御——拒绝吃c4兵而是加固d5！后翼弃兵接受变化的标志是黑方走dxc4把兵吃掉。如果走c6，那就变成了斯拉夫防御，黑方的计划从'接受弃兵争取物质'变为'加固中心拒绝弃兵'，两者是完全不同的方向",
-        punishment: ["g1f3","g8f6","b1c3"],
-        punchline: "进入斯拉夫防御，黑方没有接受弃兵，放弃了后翼弃兵接受变化的实用主义路线"
-      }
     ]
   },
   {
     name: "斯拉夫防御", nameEn: "Slav Defense", eco: "D10-D19",
-    category: "d4 开局", playerSide: "black",
+    category: "d4 开局",
     moves: ["d2d4","d7d5","c2c4","c7c6"],
     pgn: "1.d4 d5 2.c4 c6",
     desc: "用c6支撑d5，保持c8象的出路。兼具坚固和灵活，是后翼弃兵的主要回应之一。",
@@ -728,20 +657,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "斯拉夫防御相比正统防御的优势是？", a: "c8象出路不受阻", wrong: ["更快出子","更多攻击性","控制e4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 3,
-        wrong: "e7e6",
-        explain: "走e6是后翼弃兵正统防御（Orthodox Defense），而斯拉夫防御的标志是走c6！两者都支撑d5，但e6封住了c8象，这是正统防御的著名弱点；c6则保持象的出路，这是斯拉夫防御的核心优势。走e6就偏离了斯拉夫的战略意图",
-        punishment: ["b1c3","g8f6","c1g5"],
-        punchline: "进入正统防御，c8象被e6封住成为坏象，失去斯拉夫防御象路通畅的核心优势"
-      }
     ]
   },
   {
     name: "尼姆佐-印度防御", nameEn: "Nimzo-Indian Defense", eco: "E20-E59",
-    category: "d4 开局", playerSide: "black",
+    category: "d4 开局",
     moves: ["d2d4","g8f6","c2c4","e7e6","b1c3","f8b4"],
     pgn: "1.d4 Nf6 2.c4 e6 3.Nc3 Bb4",
     desc: "黑方用Bb4钉住c3马，控制e4。是最受尊敬的防御之一，曾被卡帕布兰卡等世界冠军使用。",
@@ -761,20 +681,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "尼姆佐-印度防御中Bb4的目的是？", a: "钉住c3马控制e4", wrong: ["攻击白王","准备O-O","威胁a2"] },
-    ],
-    mistakes: [
-      {
-        atMove: 5,
-        wrong: "f8e7",
-        explain: "走Be7是被动的正统防御走法，而尼姆佐-印度的精髓在于Bb4主动钉住c3马！Be7只是安静地发展，没有对白方造成任何实质威胁；Bb4则立即破坏白方推e4的计划，迫使白方在应对钉子上花费时间",
-        punishment: ["g1f3","e8g8","e2e3"],
-        punchline: "象退到被动位置，白方可以顺利走Nf3-e3-Bd3-O-O，没有受到任何干扰"
-      }
     ]
   },
   {
     name: "国王印度防御", nameEn: "King's Indian Defense", eco: "E60-E99",
-    category: "d4 开局", playerSide: "black",
+    category: "d4 开局",
     moves: ["d2d4","g8f6","c2c4","g7g6","b1c3","f8g7","e2e4","d7d6"],
     pgn: "1.d4 Nf6 2.c4 g6 3.Nc3 Bg7 4.e4 d6",
     desc: "黑方允许白方建立大中心然后王翼猛攻。局面充满张力，是最具战斗性的防御之一。卡斯帕罗夫和费舍尔的武器。",
@@ -796,27 +707,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "国王印度防御的特点是？", a: "黑方先让白方占中心再反击", wrong: ["直接争夺中心","封锁对方发展","早期弃兵"] },
-    ],
-    mistakes: [
-      {
-        atMove: 3,
-        wrong: "d7d5",
-        explain: "走d5进入格林菲尔德防御，而国王印度的精神是先走g6准备Bg7！两者虽然都是超现代防御，但国王印度让白方建立大中心后再反击，而格林菲尔德第3步就用d5直接冲击中心。走d5偏离了国王印度的核心战略",
-        punishment: ["c4d5","f6d5","e2e4"],
-        punchline: "进入格林菲尔德变化，与国王印度的战略意图相悖——本应先让白方占中心再发起王翼反攻"
-      },
-      {
-        atMove: 7,
-        wrong: "c7c5",
-        explain: "第4步走c5过于激进！在完成发展（特别是王车易位）之前就发动后翼反击，会让局面过于复杂且黑方国王不安全。正确顺序是先走d6支撑e5的反击计划，让结构更坚固",
-        punishment: ["d4c5","d6c5","d1d8"],
-        punchline: "白方Dxc5后局面复杂，黑方国王暴露，中路兵链被破坏，反击计划失败"
-      }
     ]
   },
   {
     name: "格林菲尔德防御", nameEn: "Grünfeld Defense", eco: "D70-D99",
-    category: "d4 开局", playerSide: "black",
+    category: "d4 开局",
     moves: ["d2d4","g8f6","c2c4","g7g6","b1c3","d7d5"],
     pgn: "1.d4 Nf6 2.c4 g6 3.Nc3 d5",
     desc: "黑方用d5直接挑战白方中心，然后利用g7象从远处施压。卡斯帕罗夫在世界冠军赛中的主要武器。",
@@ -836,20 +731,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "格林菲尔德防御中d5的作用是？", a: "直接挑战白方中心", wrong: ["保护f6马","准备e5","封锁c4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 5,
-        wrong: "f8g7",
-        explain: "走Bg7是国王印度防御的路线，而格林菲尔德的关键第3步就是走d5直接冲击中心！Bg7只是被动发展象，等于放弃了格林菲尔德用d5爆破白方中心的核心战略，让白方可以轻松建立理想的大中心",
-        punishment: ["e2e4","d7d6","g1f3"],
-        punchline: "白方获得梦幻的e4-d4-c4大中心，格林菲尔德的中心反击战略完全落空"
-      }
     ]
   },
   {
     name: "荷兰防御", nameEn: "Dutch Defense", eco: "A80-A99",
-    category: "d4 开局", playerSide: "black",
+    category: "d4 开局",
     moves: ["d2d4","f7f5"],
     pgn: "1.d4 f5",
     desc: "黑方用f5控制e4，寻求王翼攻击机会。大胆但稍弱化王翼安全。",
@@ -865,21 +751,12 @@ const OPENINGS = [
     },
     quiz: [
       { q: "荷兰防御的潜在弱点是？", a: "削弱王翼安全", wrong: ["中心薄弱","发展缓慢","后翼暴露"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "d7d5",
-        explain: "走d5进入后翼弃兵正统防御，而荷兰防御的标志是第1步就走f5！f5控制e4，表明黑方要在王翼搞事情。d5是很正常的防御，但完全丧失了荷兰防御独特的进攻性——f5是一个大胆的声明：我要王翼攻击！",
-        punishment: ["c2c4","g8f6","g1f3"],
-        punchline: "进入后翼弃兵框架，荷兰防御独特的王翼进攻计划无法实施"
-      }
     ]
   },
   // === Flank Openings ===
   {
     name: "英国开局", nameEn: "English Opening", eco: "A10-A39",
-    category: "侧翼开局", playerSide: "white",
+    category: "侧翼开局",
     moves: ["c2c4"],
     pgn: "1.c4",
     desc: "侧翼开局的代表，控制d5而非直接占据中心。灵活多变，可转入多种局面类型。",
@@ -894,20 +771,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "英国开局1.c4控制的关键格是？", a: "d5", wrong: ["e4","e5","d4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 0,
-        wrong: "e2e4",
-        explain: "走e4是王翼开放对局，而英国开局的特点是从侧翼用c4控制d5！e4直接占领中心，但也暴露了中心；c4则从侧翼施压，保持最大灵活性，可以转入多种不同的局面类型",
-        punishment: ["e7e5","g1f3","b8c6"],
-        punchline: "进入王翼开放对局，英国开局侧翼控制的灵活战略完全改变"
-      }
     ]
   },
   {
     name: "列蒂开局", nameEn: "Réti Opening", eco: "A04-A09",
-    category: "侧翼开局", playerSide: "white",
+    category: "侧翼开局",
     moves: ["g1f3","d7d5","c2c4"],
     pgn: "1.Nf3 d5 2.c4",
     desc: "超现代开局，不急于占据中心，用马和侧翼兵来控制。以捷克大师列蒂命名。",
@@ -924,20 +792,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "列蒂开局的核心理念是？", a: "间接控制中心", wrong: ["直接占据中心","快速进攻","早期弃兵"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "g2g3",
-        explain: "走g3是国王印度进攻（KIA）体系，而列蒂开局的第2步关键是走c4挑战d5！g3只是准备侧翼象发展，没有直接向黑方中心施压；c4则立即用侧翼兵挑战黑方的d5兵，这才是列蒂超现代理念的核心",
-        punishment: ["g8f6","f1g2","c7c5"],
-        punchline: "进入国王印度进攻框架，失去列蒂开局用c4从侧翼直接挑战中心的核心手段"
-      }
     ]
   },
   {
     name: "国王印度进攻", nameEn: "King's Indian Attack", eco: "A07-A08",
-    category: "侧翼开局", playerSide: "white",
+    category: "侧翼开局",
     moves: ["g1f3","d7d5","g2g3"],
     pgn: "1.Nf3 d5 2.g3",
     desc: "白方采用与国王印度防御镜像的设置：Nf3, g3, Bg2, O-O, d3。灵活的体系开局，费舍尔曾多次使用。",
@@ -954,20 +813,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "国王印度进攻是谁常用的武器？", a: "费舍尔", wrong: ["卡斯帕罗夫","卡尔森","卡帕布兰卡"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "c2c4",
-        explain: "走c4是列蒂开局，而国王印度进攻的体系化标志是第2步走g3！国王印度进攻的精髓是Nf3-g3-Bg2-O-O-d3这套固定体系，不管黑方怎么应对都按这个顺序发展。走c4就偏离了这个固定体系，进入了列蒂变化",
-        punishment: ["d5c4","g2g3","b8c6"],
-        punchline: "进入列蒂开局，失去国王印度进攻体系化布局的稳定性和可预见性"
-      }
     ]
   },
   {
     name: "飞象开局", nameEn: "Catalan Opening", eco: "E01-E09",
-    category: "d4 开局", playerSide: "white",
+    category: "d4 开局",
     moves: ["d2d4","g8f6","c2c4","e7e6","g2g3"],
     pgn: "1.d4 Nf6 2.c4 e6 3.g3",
     desc: "白方结合d4+c4的中心控制与g3侧翼象发展。长对角线上的象非常强大。当今顶级赛事中极受欢迎。",
@@ -981,25 +831,16 @@ const OPENINGS = [
     ],
     continuation: {
       label: "飞象开局·开放变化",
-      moves: ["f1g2","d7d5","g8f6","e1g1","d5c4","d1a4","c8d7","a4c4"],
-      explain: ["Bg2：大炮上线！控制长对角线","d5：黑方挑战中心","Nf3：（已走过）","O-O：白方抢先易位","dxc4：黑方接受弃兵！","Qa4+：白方出后将军，准备夺回兵","Bd7：挡住将军","Qxc4：夺回兵，白方Bg2在对角线上的压力是飞象开局的长期优势"]
+      moves: ["f1g2","d7d5","g1f3","e1g1","d5c4","d1a4","c8d7","a4c4"],
+      explain: ["Bg2：大炮上线！控制长对角线","d5：黑方挑战中心","Nf3：发展马准备王车易位","O-O：白方抢先易位","dxc4：黑方接受弃兵！","Qa4+：白方出后将军，准备夺回兵","Bd7：挡住将军","Qxc4：夺回兵，白方Bg2在对角线上的压力是飞象开局的长期优势"]
     },
     quiz: [
       { q: "飞象开局中g3的目的是？", a: "将象发展到g2控制长对角线", wrong: ["准备h4进攻","保护国王","控制f4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 4,
-        wrong: "b1c3",
-        explain: "走Nc3是标准的后翼弃兵正统发展，而飞象开局的标志是走g3准备Bg2！飞象开局结合了d4+c4的中心控制和侧翼象的长对角线压力，走Nc3就放弃了这个独特的侧翼象战略，进入了更普通的后翼弃兵变化",
-        punishment: ["d7d5","g1f3","f8e7"],
-        punchline: "进入普通后翼弃兵变化，失去飞象开局用Bg2控制长对角线的独特战略优势"
-      }
     ]
   },
   {
     name: "伦敦体系", nameEn: "London System", eco: "D02",
-    category: "d4 开局", playerSide: "white",
+    category: "d4 开局",
     moves: ["d2d4","d7d5","c1f4"],
     pgn: "1.d4 d5 2.Bf4",
     desc: "白方早期出象到f4，形成稳定的兵结构（d4-e3-c3）。容易学习，计划明确，适合各水平棋手。",
@@ -1016,20 +857,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "伦敦体系最大的优点是？", a: "容易学习，计划明确", wrong: ["攻击力最强","理论最深","变化最多"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "c2c4",
-        explain: "走c4是后翼弃兵，而伦敦体系的标志是第2步走Bf4！伦敦体系的关键在于在走e3之前先把象放出来——一旦走了e3，c8象就被封住了。c4虽然也是好棋，但就偏离了伦敦体系稳定、计划明确的特色",
-        punishment: ["g8f6","b1c3","e7e6"],
-        punchline: "进入后翼弃兵变化，失去伦敦体系Bf4早出象、计划固定的体系优势"
-      }
     ]
   },
   {
     name: "王翼弃兵", nameEn: "King's Gambit", eco: "C30-C39",
-    category: "e4 开局", playerSide: "white",
+    category: "e4 开局",
     moves: ["e2e4","e7e5","f2f4"],
     pgn: "1.e4 e5 2.f4",
     desc: "浪漫主义时代的标志性开局。白方弃f兵换取中心控制和快速进攻。大胆激进但有一定风险。",
@@ -1047,20 +879,11 @@ const OPENINGS = [
     quiz: [
       { q: "王翼弃兵弃的是哪个兵？", a: "f兵", wrong: ["e兵","d兵","c兵"] },
       { q: "王翼弃兵属于什么风格？", a: "浪漫主义/进攻型", wrong: ["超现代","封闭防守","侧翼控制"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "g1f3",
-        explain: "走Nf3是最常见的正常发展，但王翼弃兵的激进精髓就在于第2步走f4！Nf3是稳健路线，后续仍可转入西班牙或意大利；f4则是一个大胆宣战：主动弃兵换取中心和攻击主动权，进入浪漫主义时代的标志性开局",
-        punishment: ["b8c6","f1c4","g8f6"],
-        punchline: "进入普通开放对局，错过王翼弃兵激进弃f兵换取主动的浪漫主义风格"
-      }
     ]
   },
   {
     name: "维也纳开局", nameEn: "Vienna Game", eco: "C25-C29",
-    category: "e4 开局", playerSide: "white",
+    category: "e4 开局",
     moves: ["e2e4","e7e5","b1c3"],
     pgn: "1.e4 e5 2.Nc3",
     desc: "白方用Nc3代替Nf3，保留f2-f4的推进可能。灵活且有攻击潜力，可转入多种局面。",
@@ -1077,20 +900,11 @@ const OPENINGS = [
     },
     quiz: [
       { q: "维也纳开局Nc3保留了什么可能性？", a: "f2-f4的推进", wrong: ["d2-d4","c2-c4","g2-g4"] },
-    ],
-    mistakes: [
-      {
-        atMove: 2,
-        wrong: "g1f3",
-        explain: "走Nf3是最常见的正常发展，但维也纳开局的巧思就在于走Nc3而非Nf3！Nc3保留了f2-f4推进的权利，可以演变成'维也纳弃兵'；而Nf3占据了f3位置，阻止了f4推进，偏离了维也纳开局的核心战略弹性",
-        punishment: ["b8c6","f1c4","g8f6"],
-        punchline: "进入普通开放对局，失去维也纳开局保留f4推进、保持战略弹性的核心优势"
-      }
     ]
   },
   {
     name: "阿廖欣防御", nameEn: "Alekhine's Defense", eco: "B02-B05",
-    category: "e4 开局", playerSide: "black",
+    category: "e4 开局",
     moves: ["e2e4","g8f6"],
     pgn: "1.e4 Nf6",
     desc: "黑方用马引诱白方兵推进，然后攻击过度扩展的兵链。以世界冠军阿廖欣命名。",
@@ -1106,60 +920,17 @@ const OPENINGS = [
     },
     quiz: [
       { q: "阿廖欣防御的策略是？", a: "引诱白方兵过度推进再反击", wrong: ["直接争夺中心","快速出子","封锁中心"] },
-    ],
-    mistakes: [
-      {
-        atMove: 1,
-        wrong: "e7e5",
-        explain: "走e5是对称开放对局，而阿廖欣防御的核心理念是用Nf6直接攻击e4，引诱白方推兵！e5选择了正统路线，黑方放弃了阿廖欣的挑衅策略——引诱白方兵链过度延伸后再用d6或c5攻击这条薄弱的兵链",
-        punishment: ["g1f3","b8c6","f1c4"],
-        punchline: "进入对称开放对局，黑方失去阿廖欣防御引诱白方过度扩张的战略意图"
-      }
     ]
   },
 ];
 
 // ============================================================
-// Chess Piece SVG (Colin M.L. Burnett / cburnett design, public domain)
+// Chess Piece Unicode & Logic
 // ============================================================
-// SVG piece paths — cburnett design (public domain, CC BY-SA 3.0)
-// White pieces: fill #fff, stroke #333. Black pieces: fill #333, stroke #333, detail stroke #fff.
-const PIECE_SVG = {
-  K: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333', d = isW ? '#333' : '#fff';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><g fill="none" fill-rule="evenodd" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6" stroke-linejoin="miter"/><path d="M22.5 6l-2 2h4l-2-2" stroke-linejoin="miter" fill="${s}"/><path d="M20 8h5" stroke-linejoin="miter"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5" fill="${f}" stroke-linecap="butt"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-2.5-7.5-12-10.5-16-4-3 6 6 10.5 6 10.5v7" fill="${f}"/><path d="M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0" stroke="${d}"/></g></svg>`;
-  },
-  Q: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333', d = isW ? '#333' : '#fff';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><g fill="${f}" fill-rule="evenodd" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12a2 2 0 1 1-4 0 2 2 0 1 1 4 0zm16.5-4.5a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM41 12a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM16 8.5a2 2 0 1 1-4 0 2 2 0 1 1 4 0zM33 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0z"/><path d="M9 26c8.5-1.5 21-1.5 27 0l2.5-12.5L31 25l-.3-14.1-5.2 13.6-3-14.5-3 14.5-5.2-13.6L14 25 6.5 13.5 9 26z" stroke-linecap="butt"/><path d="M9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z" stroke-linecap="butt"/><path d="M11.5 30c3.5-1 18.5-1 22 0m-22 3.5c6-1 15-1 21 0" fill="none" stroke="${d}"/></g></svg>`;
-  },
-  R: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333', d = isW ? '#333' : '#fff';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><g fill="${f}" fill-rule="evenodd" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zm3-3v-4h21v4H12zm-1-22V9h4v2h5V9h5v2h5V9h4v5" stroke-linecap="butt"/><path d="M34 14l-3 3H14l-3-3"/><path d="M31 17v12.5H14V17" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M31 29.5l1.5 2.5h-20l1.5-2.5"/><path d="M11 14h23" fill="none" stroke="${d}" stroke-linejoin="miter"/></g></svg>`;
-  },
-  B: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333', d = isW ? '#333' : '#fff';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><g fill="none" fill-rule="evenodd" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="${f}" stroke-linecap="butt"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/></g><path d="M17.5 26h10M15 30h15" stroke="${d}" stroke-linejoin="miter"/></g></svg>`;
-  },
-  N: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333', d = isW ? '#333' : '#fff';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><g fill="none" fill-rule="evenodd" stroke="${s}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H15c0-9 10-6.5 8-21" fill="${f}"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003 1-4-4 0-2 6-12 6-12s1.89-1.9 2-3.5c-.73-.994-.5-2-.5-3 1-1 3 2.5 3 2.5h2s.78-1.992 2.5-3c1 0 1 3 1 3" fill="${f}"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 1 1 1 0z" fill="${s}"/><path d="M14.933 15.75a.5 1.5 30 1 1-.866-.5.5 1.5 30 1 1 .866.5z" fill="${s}"/></g></svg>`;
-  },
-  P: (isW) => {
-    const f = isW ? '#fff' : '#333', s = '#333';
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" style="width:100%;height:100%"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03C15.41 27.09 11 31.58 11 39.5H34c0-7.92-4.41-12.41-7.41-13.47C28.06 24.84 29 23.03 29 21c0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="${f}" stroke="${s}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  },
+const PIECE_SYMBOLS = {
+  K: '♔\uFE0E', Q: '♕\uFE0E', R: '♖\uFE0E', B: '♗\uFE0E', N: '♘\uFE0E', P: '♙\uFE0E',
+  k: '♚\uFE0E', q: '♛\uFE0E', r: '♜\uFE0E', b: '♝\uFE0E', n: '♞\uFE0E', p: '♟\uFE0E'
 };
-// Create white/black wrappers from the isW parameter functions
-{
-  const makers = { K: PIECE_SVG.K, Q: PIECE_SVG.Q, R: PIECE_SVG.R, B: PIECE_SVG.B, N: PIECE_SVG.N, P: PIECE_SVG.P };
-  PIECE_SVG.K = () => makers.K(true);  PIECE_SVG.k = () => makers.K(false);
-  PIECE_SVG.Q = () => makers.Q(true);  PIECE_SVG.q = () => makers.Q(false);
-  PIECE_SVG.R = () => makers.R(true);  PIECE_SVG.r = () => makers.R(false);
-  PIECE_SVG.B = () => makers.B(true);  PIECE_SVG.b = () => makers.B(false);
-  PIECE_SVG.N = () => makers.N(true);  PIECE_SVG.n = () => makers.N(false);
-  PIECE_SVG.P = () => makers.P(true);  PIECE_SVG.p = () => makers.P(false);
-}
 
 const INITIAL_BOARD = [
   ['r','n','b','q','k','b','n','r'],
@@ -1189,37 +960,32 @@ function boardAfterMoves(moves) {
   return b;
 }
 
-let boardFlipped = false;
-
 function renderBoard(containerId, board, onClick) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   const files = 'abcdefgh';
-  const flipped = boardFlipped;
-  for (let ri = 0; ri < 8; ri++) {
-    for (let ci = 0; ci < 8; ci++) {
-      const r = flipped ? 7 - ri : ri;
-      const c = flipped ? 7 - ci : ci;
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
       const sq = document.createElement('div');
       sq.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       sq.dataset.row = r;
       sq.dataset.col = c;
       const piece = board[r][c];
-      if (piece && PIECE_SVG[piece]) {
-        const svgWrapper = document.createElement('div');
-        svgWrapper.style.cssText = 'width:80%;height:80%;display:flex;align-items:center;justify-content:center;pointer-events:none;';
-        svgWrapper.innerHTML = PIECE_SVG[piece]();
-        sq.appendChild(svgWrapper);
+      if (piece) {
+        const span = document.createElement('span');
+        span.textContent = PIECE_SYMBOLS[piece];
+        span.className = piece === piece.toUpperCase() ? 'pc-white' : 'pc-black';
+        sq.appendChild(span);
       }
-      // Rank numbers on leftmost display column
-      if (ci === 0) {
+      // Rank numbers on leftmost column
+      if (c === 0) {
         const rank = document.createElement('span');
         rank.className = 'coord-rank';
         rank.textContent = 8 - r;
         sq.appendChild(rank);
       }
-      // File letters on bottom display row
-      if (ri === 7) {
+      // File letters on bottom row
+      if (r === 7) {
         const file = document.createElement('span');
         file.className = 'coord-file';
         file.textContent = files[c];
@@ -1231,21 +997,15 @@ function renderBoard(containerId, board, onClick) {
   }
 }
 
-function findSquare(containerId, row, col) {
-  const container = document.getElementById(containerId);
-  for (const sq of container.children) {
-    if (sq.dataset.row == row && sq.dataset.col == col) return sq;
-  }
-  return null;
-}
-
 function highlightSquare(containerId, row, col, cls) {
-  const sq = findSquare(containerId, row, col);
+  const container = document.getElementById(containerId);
+  const sq = container.children[row * 8 + col];
   if (sq) { sq.classList.add(cls); setTimeout(() => sq.classList.remove(cls), 600); }
 }
 
 function setHighlight(containerId, row, col, on) {
-  const sq = findSquare(containerId, row, col);
+  const container = document.getElementById(containerId);
+  const sq = container.children[row * 8 + col];
   if (sq) { if (on) sq.classList.add('highlight'); else sq.classList.remove('highlight'); }
 }
 
@@ -1326,14 +1086,10 @@ renderLibrary();
 // ============================================================
 // Practice Mode: Follow the opening moves
 // ============================================================
-let practiceState = { opening: null, board: null, moveIndex: 0, selected: null, streak: 0, autoPlaying: false, maxMoveIndex: 0, browsing: false };
-let autoPlayTimeout = null;
+let practiceState = { opening: null, board: null, moveIndex: 0, selected: null, streak: 0 };
 
 function startPractice(opening) {
-  if (autoPlayTimeout) { clearTimeout(autoPlayTimeout); autoPlayTimeout = null; }
-  practiceState = { opening, board: cloneBoard(INITIAL_BOARD), moveIndex: 0, selected: null, streak: practiceState.streak, autoPlaying: false, maxMoveIndex: 0, browsing: false };
-  // Flip board when player is black
-  boardFlipped = (opening.playerSide === 'black');
+  practiceState = { opening, board: cloneBoard(INITIAL_BOARD), moveIndex: 0, selected: null, streak: practiceState.streak };
   document.getElementById('practice-name').textContent = opening.name.length > 12 ? opening.name.substring(0,12)+'…' : opening.name;
   document.getElementById('practice-title').textContent = opening.name;
   document.getElementById('practice-desc').textContent = opening.desc;
@@ -1346,10 +1102,9 @@ function startPractice(opening) {
   document.getElementById('demo-panel').style.display = 'none';
   document.getElementById('demo-messages').innerHTML = '';
   document.getElementById('demo-nav').style.display = 'none';
+  document.body.classList.remove('panel-practice-demo-active');
   demoPlaying = false;
   demoState = null;
-  updateNavButtons();
-  autoPlayOpponent();
 }
 
 function updatePracticeProgress() {
@@ -1396,26 +1151,10 @@ let practiceSelected = null;
 function onPracticeClick(row, col, piece) {
   if (!practiceState.opening) return;
   if (demoPlaying) return;
-  if (practiceState.autoPlaying) return;
   if (practiceState.moveIndex >= practiceState.opening.moves.length) return;
-
-  // 如果在浏览历史走法，点击棋盘回到当前位置
-  if (practiceState.browsing) {
-    practiceState.moveIndex = practiceState.maxMoveIndex;
-    practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
-    practiceState.browsing = false;
-    renderBoard('practice-board', practiceState.board, onPracticeClick);
-    updatePracticeProgress();
-    renderPracticeMoves();
-    updateNavButtons();
-    hideFeedback('practice-feedback');
-    return;
-  }
-
   hideAllTips();
 
   const expectedMove = practiceState.opening.moves[practiceState.moveIndex];
-  const playerSide = practiceState.opening.playerSide || 'white';
   const isWhiteTurn = practiceState.moveIndex % 2 === 0;
 
   if (practiceSelected === null) {
@@ -1423,8 +1162,7 @@ function onPracticeClick(row, col, piece) {
     if (!piece) return;
     const isWhitePiece = piece === piece.toUpperCase();
     if (isWhiteTurn !== isWhitePiece) {
-      const sideMsg = playerSide === 'white' ? '你执白方，请选择白色棋子' : '你执黑方，请选择黑色棋子';
-      showFeedback('practice-feedback', sideMsg, 'info');
+      showFeedback('practice-feedback', isWhiteTurn ? '现在轮到白方走棋，请选择白色棋子' : '现在轮到黑方走棋，请选择黑色棋子', 'info');
       return;
     }
     practiceSelected = { row, col };
@@ -1432,23 +1170,9 @@ function onPracticeClick(row, col, piece) {
     setHighlight('practice-board', row, col, true);
     hideFeedback('practice-feedback');
   } else {
-    // Making a move — or re-selecting a different piece
+    // Making a move
     const fromCol = practiceSelected.col;
     const fromRow = practiceSelected.row;
-
-    // If clicking on another piece of the same color, re-select it instead of treating as a move
-    if (piece) {
-      const clickedIsWhite = piece === piece.toUpperCase();
-      const selectedIsWhite = isWhiteTurn; // player's side
-      if (clickedIsWhite === selectedIsWhite && (row !== fromRow || col !== fromCol)) {
-        clearHighlights('practice-board');
-        practiceSelected = { row, col };
-        setHighlight('practice-board', row, col, true);
-        hideFeedback('practice-feedback');
-        return;
-      }
-    }
-
     const moveStr = String.fromCharCode(97 + fromCol) + (8 - fromRow) + String.fromCharCode(97 + col) + (8 - row);
 
     clearHighlights('practice-board');
@@ -1459,256 +1183,29 @@ function onPracticeClick(row, col, piece) {
       const justCompletedIdx = practiceState.moveIndex;
       practiceState.board = applyMove(practiceState.board, moveStr);
       practiceState.moveIndex++;
-      practiceState.maxMoveIndex = practiceState.moveIndex;
-      practiceState.browsing = false;
       practiceState.streak++;
       renderBoard('practice-board', practiceState.board, onPracticeClick);
       highlightSquare('practice-board', row, col, 'correct');
       updatePracticeProgress();
       renderPracticeMoves();
-      updateNavButtons();
 
       // Auto-comment from assistant
       autoExplainMove(justCompletedIdx);
 
       if (practiceState.moveIndex >= practiceState.opening.moves.length) {
-        showFeedback('practice-feedback', '完美！你完成了「' + practiceState.opening.name + '」的所有走法！', 'success');
+        showFeedback('practice-feedback', `🎉 完美！你完成了「${practiceState.opening.name}」的所有走法！`, 'success');
       } else {
         hideFeedback('practice-feedback');
-        autoPlayOpponent();
       }
     } else {
-      // Wrong move
+      // Wrong
       practiceState.streak = 0;
-      practiceSelected = null;
       updatePracticeProgress();
       highlightSquare('practice-board', row, col, 'wrong');
-      showMistakeFeedback(moveStr);
+      showFeedback('practice-feedback', '走法不对，再试试！点击棋子重新选择。', 'error');
     }
   }
 }
-
-let punishmentState = null;
-
-function showMistakeFeedback(wrongMoveStr) {
-  const opening = practiceState.opening;
-  if (!opening) return;
-  const moveIdx = practiceState.moveIndex;
-  const isWhite = moveIdx % 2 === 0;
-  const side = isWhite ? 'white' : 'black';
-  const sideLabel = isWhite ? '❌ 白方' : '❌ 黑方';
-
-  const mistake = opening.mistakes && opening.mistakes.find(
-    m => m.atMove === moveIdx && m.wrong === wrongMoveStr
-  );
-
-  const tip = document.getElementById(side === 'white' ? 'tip-white' : 'tip-black');
-  tip.innerHTML = '';
-
-  if (mistake) {
-    const sideSpan = document.createElement('span');
-    sideSpan.className = 'tip-side';
-    sideSpan.textContent = sideLabel;
-    tip.appendChild(sideSpan);
-    tip.appendChild(document.createTextNode(' ' + mistake.explain));
-
-    const btn = document.createElement('button');
-    btn.className = 'mistake-btn';
-    btn.textContent = '👁 看看后果';
-    btn.onclick = playPunishment;
-    tip.appendChild(btn);
-
-    const dismiss = document.createElement('span');
-    dismiss.className = 'tip-dismiss';
-    dismiss.textContent = '点击泡泡关闭';
-    tip.appendChild(dismiss);
-
-    tip.className = 'speech-bubble error-bubble show';
-    punishmentState = { mistake, boardBeforeWrong: cloneBoard(practiceState.board), wrongMove: wrongMoveStr };
-  } else {
-    const correctMove = opening.moves[moveIdx];
-    const explain = opening.moveExplain && opening.moveExplain[moveIdx] ? opening.moveExplain[moveIdx] : '';
-
-    const sideSpan = document.createElement('span');
-    sideSpan.className = 'tip-side';
-    sideSpan.textContent = sideLabel;
-    tip.appendChild(sideSpan);
-    tip.appendChild(document.createTextNode(' 这步不是主线走法。正确走法：' + moveToNotation(correctMove, moveIdx)));
-
-    if (explain) {
-      const small = document.createElement('small');
-      small.style.cssText = 'color:#aaa;display:block;margin-top:4px;';
-      small.textContent = explain;
-      tip.appendChild(small);
-    }
-
-    const dismiss = document.createElement('span');
-    dismiss.className = 'tip-dismiss';
-    dismiss.textContent = '点击泡泡关闭';
-    tip.appendChild(dismiss);
-
-    tip.className = 'speech-bubble error-bubble show';
-    punishmentState = null;
-  }
-}
-
-function playPunishment() {
-  if (!punishmentState) return;
-  const { mistake, boardBeforeWrong, wrongMove } = punishmentState;
-
-  let board = applyMove(boardBeforeWrong, wrongMove);
-  const boards = [board];
-  for (const m of mistake.punishment) {
-    board = applyMove(board, m);
-    boards.push(cloneBoard(board));
-  }
-
-  practiceState.autoPlaying = true;
-  hideAllTips();
-
-  renderBoard('practice-board', boards[0], onPracticeClick);
-  const wtc = wrongMove.charCodeAt(2) - 97, wtr = 8 - parseInt(wrongMove[3]);
-  highlightSquare('practice-board', wtr, wtc, 'wrong');
-
-  let step = 0;
-  const interval = setInterval(() => {
-    if (step >= mistake.punishment.length) {
-      clearInterval(interval);
-      const isWhite = practiceState.moveIndex % 2 === 0;
-      const side = isWhite ? 'white' : 'black';
-      const tip = document.getElementById(side === 'white' ? 'tip-white' : 'tip-black');
-      tip.innerHTML = '';
-
-      const sideSpan = document.createElement('span');
-      sideSpan.className = 'tip-side';
-      sideSpan.style.color = '#f44336';
-      sideSpan.textContent = '💡 后果';
-      tip.appendChild(sideSpan);
-      tip.appendChild(document.createTextNode(' ' + mistake.punchline));
-
-      const btn = document.createElement('button');
-      btn.className = 'mistake-btn';
-      btn.textContent = '↩ 回到正确位置';
-      btn.onclick = revertFromPunishment;
-      tip.appendChild(btn);
-
-      const dismiss = document.createElement('span');
-      dismiss.className = 'tip-dismiss';
-      dismiss.textContent = '点击泡泡关闭';
-      tip.appendChild(dismiss);
-
-      tip.className = 'speech-bubble error-bubble show';
-      return;
-    }
-
-    renderBoard('practice-board', boards[step + 1], onPracticeClick);
-    const m = mistake.punishment[step];
-    const tc = m.charCodeAt(2) - 97, tr = 8 - parseInt(m[3]);
-    setHighlight('practice-board', tr, tc, true);
-    step++;
-  }, 800);
-}
-
-function revertFromPunishment() {
-  if (!punishmentState) return;
-  practiceState.board = punishmentState.boardBeforeWrong;
-  renderBoard('practice-board', practiceState.board, onPracticeClick);
-  practiceState.autoPlaying = false;
-  practiceSelected = null;
-  punishmentState = null;
-  hideAllTips();
-  hideFeedback('practice-feedback');
-  showFeedback('practice-feedback', '再试一次吧！', 'info');
-}
-
-function autoPlayOpponent() {
-  if (!practiceState.opening) return;
-  if (practiceState.moveIndex >= practiceState.opening.moves.length) return;
-  const opening = practiceState.opening;
-  const playerSide = opening.playerSide || 'white';
-  const isWhiteTurn = practiceState.moveIndex % 2 === 0;
-  const isPlayerTurn = (playerSide === 'white' && isWhiteTurn) || (playerSide === 'black' && !isWhiteTurn);
-  if (isPlayerTurn) return;
-
-  practiceState.autoPlaying = true;
-  autoPlayTimeout = setTimeout(() => {
-    const move = opening.moves[practiceState.moveIndex];
-    const justCompletedIdx = practiceState.moveIndex;
-    practiceState.board = applyMove(practiceState.board, move);
-    practiceState.moveIndex++;
-    practiceState.maxMoveIndex = practiceState.moveIndex;
-    renderBoard('practice-board', practiceState.board, onPracticeClick);
-    const tc = move.charCodeAt(2) - 97, tr = 8 - parseInt(move[3]);
-    setHighlight('practice-board', tr, tc, true);
-    updatePracticeProgress();
-    renderPracticeMoves();
-    autoExplainMove(justCompletedIdx);
-    updateNavButtons();
-    practiceState.autoPlaying = false;
-
-    if (practiceState.moveIndex >= opening.moves.length) {
-      showFeedback('practice-feedback', '完美！你完成了「' + opening.name + '」的所有走法！', 'success');
-      return;
-    }
-    // 递归检查是否还需要继续自动走（连续对手走法）
-    autoPlayOpponent();
-  }, 500);
-}
-
-function navigateBack() {
-  if (!practiceState.opening || practiceState.moveIndex <= 0) return;
-  if (autoPlayTimeout) { clearTimeout(autoPlayTimeout); autoPlayTimeout = null; }
-  practiceState.autoPlaying = false;
-  practiceState.moveIndex--;
-  practiceState.browsing = practiceState.moveIndex < practiceState.maxMoveIndex;
-  practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
-  renderBoard('practice-board', practiceState.board, onPracticeClick);
-  updatePracticeProgress();
-  renderPracticeMoves();
-  updateNavButtons();
-  practiceSelected = null;
-  hideAllTips();
-  hideFeedback('practice-feedback');
-}
-
-function navigateForward() {
-  if (!practiceState.opening || practiceState.moveIndex >= practiceState.maxMoveIndex) return;
-  practiceState.moveIndex++;
-  practiceState.board = boardAfterMoves(practiceState.opening.moves.slice(0, practiceState.moveIndex));
-  practiceState.browsing = practiceState.moveIndex < practiceState.maxMoveIndex;
-  renderBoard('practice-board', practiceState.board, onPracticeClick);
-  updatePracticeProgress();
-  renderPracticeMoves();
-  updateNavButtons();
-  practiceSelected = null;
-  if (!practiceState.browsing) {
-    // 回到当前位置，触发自动走对手
-    autoPlayOpponent();
-  }
-}
-
-function updateNavButtons() {
-  const backBtn = document.getElementById('nav-back');
-  const fwdBtn = document.getElementById('nav-forward');
-  if (!backBtn || !fwdBtn) return;
-  backBtn.disabled = !practiceState.opening || practiceState.moveIndex <= 0;
-  fwdBtn.disabled = !practiceState.opening || practiceState.moveIndex >= practiceState.maxMoveIndex;
-}
-
-// 键盘快捷键：左右箭头导航（练习 + demo 模式）
-document.addEventListener('keydown', function(e) {
-  const practicePanel = document.getElementById('panel-practice');
-  if (!practicePanel || !practicePanel.classList.contains('active')) return;
-  if (e.key === 'ArrowLeft') {
-    e.preventDefault();
-    if (demoPlaying && demoState) demoPrev();
-    else navigateBack();
-  } else if (e.key === 'ArrowRight') {
-    e.preventDefault();
-    if (demoPlaying && demoState) demoAdvance();
-    else navigateForward();
-  }
-});
 
 function showHint() {
   if (!practiceState.opening || practiceState.moveIndex >= practiceState.opening.moves.length) return;
@@ -1766,11 +1263,9 @@ function showQuizQuestion() {
   hideFeedback('quiz-feedback');
   document.getElementById('quiz-next').style.display = 'none';
 
-  // Show board (always from white's perspective in quiz)
-  const savedFlipped = boardFlipped; boardFlipped = false;
+  // Show board
   const board = boardAfterMoves(qObj.opening.moves);
   renderBoard('quiz-board', board);
-  boardFlipped = savedFlipped;
 
   // Show question
   document.getElementById('quiz-question').textContent = qObj.q;
@@ -1846,11 +1341,9 @@ function showGuessQuestion() {
   hideFeedback('guess-feedback');
   document.getElementById('guess-next').style.display = 'none';
 
-  // Render target position (always from white's perspective in guess)
-  const savedFlipped = boardFlipped; boardFlipped = false;
+  // Render target position
   const board = boardAfterMoves(target.moves);
   renderBoard('guess-board', board);
-  boardFlipped = savedFlipped;
 
   // Show hint with move count
   document.getElementById('guess-hint').textContent = `这个局面经过了 ${target.moves.length} 步棋，属于「${target.category}」类别。`;
@@ -1942,25 +1435,25 @@ function showDemoPanel() {
   const msgs = document.getElementById('demo-messages');
   panel.style.display = '';
   msgs.innerHTML = '';
-  addDemoMsg(`<b>${o.continuation.label}</b><br>用 ← → 键逐步浏览后续走法`);
-  // Auto-start demo without requiring button click
-  playDemo(null);
+  addDemoMsg(`<b>${o.continuation.label}</b><br>开局走完后，接下来通常这样发展：`);
+  // Auto-start demo
+  startDemo();
 }
 
 let demoPlaying = false;
 let demoState = null;
 
-function playDemo(btnId) {
+function startDemo() {
   const o = practiceState.opening;
   if (!o || !o.continuation) return;
-  const btn = document.getElementById(btnId);
-  if (btn) btn.style.display = 'none';
 
   demoPlaying = true;
-  const baseBoard = cloneBoard(practiceState.board);
+  // Build board from scratch: replay opening moves to get correct state
+  let baseBoard = cloneBoard(INITIAL_BOARD);
+  for (const m of o.moves) baseBoard = applyMove(baseBoard, m);
   // Pre-compute all board states for prev/next
-  const boards = [baseBoard];
-  let b = baseBoard;
+  const boards = [cloneBoard(baseBoard)];
+  let b = cloneBoard(baseBoard);
   for (const m of o.continuation.moves) {
     b = applyMove(b, m);
     boards.push(cloneBoard(b));
@@ -1970,11 +1463,13 @@ function playDemo(btnId) {
     boards: boards,
     step: 0,
     msgCount: 0,
-    sideOffset: o.moves.length % 2  // 0 = continuation starts with white, 1 = starts with black
+    sideOffset: o.moves.length % 2
   };
 
+  addDemoMsg('用 <b>← →</b> 按钮逐步浏览');
   demoState.msgCount = 0;
   document.getElementById('demo-nav').style.display = '';
+  document.body.classList.add('panel-practice-demo-active');
   demoShowStep(0);
 }
 
@@ -1984,6 +1479,11 @@ function demoShowStep(idx) {
   const total = cont.moves.length;
   idx = Math.max(0, Math.min(idx, total));
   demoState.step = idx;
+
+  // On mobile, scroll board into view
+  if (window.innerWidth <= 520) {
+    document.getElementById('practice-board').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   // Render board state
   renderBoard('practice-board', boards[idx]);
@@ -2041,6 +1541,7 @@ function demoAdvance() {
     hideAllTips();
     addDemoMsg('✓ 演示结束！点「重新开始」可以重新练习。');
     document.getElementById('demo-nav').style.display = 'none';
+    document.body.classList.remove('panel-practice-demo-active');
     demoState = null;
     return;
   }
